@@ -15,7 +15,7 @@ public class Resource {
 	public final static int[] MonsterBlood = { 100, 20, 150, 25, 100, 20, 300,
 			25, 150, 18, 300, 20, 200, 25, 400, 30, 150, 20, 150, 25, 150, 20,
 			150, 30, 150, 30, 1500, 0, 2000, 0, 2500, 0, 3000, 0, 3500, 0,
-			4000, 0, 4500, 0, 500, 0, 400, 25 };
+			4000, 0, 4500, 0, 5000, 0, 400, 25 };
 
 	public final static int[] stoneXY = { 10, -100, 0, 90, -200, 0, 180, -340,
 			0, 120, -360, 0, 40, -400, 0 };
@@ -38,21 +38,16 @@ public class Resource {
 	public static byte[] heroAndSoldierLevel = { 1, 1, 1, 1, 0, 0, 0, 0, 0 };
 	public static byte[] isBelongMyOfHero = { 1, 0, 0, 0, 0, 0 };
 
-	public final static long[] heroMoney = { 5000, 10000, 20000, 25000, 50000,
-			50000 };
+	public final static long[] heroMoney = { 1000, 10000, 25000, 50000, 60000,
+			90000 };
 
-	public final static long[] soldierMoney = { 0, 0, 0, 0, 1000, 5000, 5000,
-			10000, 10000 };
+	public final static long[] soldierMoney = { 0, 0, 0, 0, 30000, 20000,
+			40000, 50000, 50000 };
 
 	public static byte[] guanqiaLevel = { 0, -1, -1, -1, -1, -1, -1, -1, -1,
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 			-1, -1, -1, -1, -1, -1, -1 };
-
-	// public final static byte[] guanqiaLevel = { 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	// 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	// -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	// -1, -1, -1, -1, -1, -1 };
 
 	public final static int[][] heroValue = {
 			{ 400, 4, 1000, 100, 1, 4000, 100, 15 },
@@ -67,7 +62,7 @@ public class Resource {
 			{ 50, 4000, 5, 4000, 6, 1 }, { 55, 5000, 3, 5000 },
 			{ 65, 5000, 5, 5000 }, { 70, 5000, 3, 5000, 20, 1 } };
 	public static int[] goodsPrice = { 1000, 1000, 1000 };
-	public static byte[] goodsNums = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	public static byte[] goodsNums = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	public final static int[] prop2Localtion = { 150, -150, 0, 0, 250, -150, 0,
 			0, 350, -50, 0, 0, 300, 100, 0, 0, 200, 100, 0, 0, 200, 50, 0, 0,
 			250, -100, 0, 0 };
@@ -76,7 +71,7 @@ public class Resource {
 
 	public final static String[] shopInfo = { "血瓶", "恢复英雄40%的血量。（战斗中使用）",
 			"火球术", "使敌人损失30%的血量。（战斗中使用）", "狂暴术", "士兵的攻击力翻倍。（30秒）", "双倍经验卡",
-			"战斗胜利获得的经验翻倍。", "双倍金币卡", "战斗胜利获得的金币翻倍。", "能量石", "使用后增加10点能量。",
+			"战斗胜利获得的经验翻倍。", "双倍金币卡", "战斗胜利获得的金币翻倍。", "能量石", "使用后增加20点能量。",
 			"保护符文", "通天塔战斗失败避免损失。", "军团之力", "增加所有士兵10%攻击力。", "刚性护符",
 			"增加英雄20点防御力。", "生命谐音", "增加英雄20%生命。", "金币礼包", "兑换10000金币。" };
 
@@ -113,10 +108,6 @@ public class Resource {
 			"在熔岩之岛的所有关卡取得3星评价", "英雄1升到20级", "英雄2升到20级", "英雄3升到20级", "英雄4升到20级",
 			"英雄5升到20级", "英雄6升到20级", "步兵升到20级", "骑士升到20级", "猎人升到20级", "锤兵升到20级",
 			"牧师升到20级", "狂战士升到20级", "魔法兵升到20级", "刺客升到20级", "火枪兵升到20级" };
-	public static String[] someUpGreatInfoH = { "", "玩家升级到5级后解锁！",
-			"玩家升级到10级后解锁！", "玩家升级到20级后解锁！", "通关怨灵地窟后解锁！", "无尽之塔30层后解锁！" };
-	public static String[] someUpGreatInfoS = { "", "", "", "", "通关索米亚草原！",
-			"通关索米亚草原！", "通关怨灵地窟！", "通关怨灵地窟！", "通关冰霜大陆！" };
 	public static byte[] isFinishAttainment = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	public static int[] AttainmentMoney = { 5000, 5000, 5000, 5000, 5000,
@@ -124,7 +115,6 @@ public class Resource {
 			10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000,
 			10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000 };
 	public static int tongtiantafloor = 0;
-	public static byte[] count_c_t = { 1, 1 };
 	public static byte saveSelectHero = 0;
 	public static byte[] savaSelcetSoldier = { 0, 1, 2, 3 };
 	public static long resumeNengliangTime;
@@ -312,6 +302,12 @@ public class Resource {
 	public static final short soldier121 = NUMS++;
 	public static final short soldier122 = NUMS++;
 	public static final short saybox = NUMS++;
+	public static final short IMG_ID_RECHARGE_CZBJ = NUMS++;
+	public static final short IMG_ID_RECHARGE_CZBJ_2 = NUMS++;
+	public static final short IMG_ID_PROMPT_POPUP_BG = NUMS++;
+	public static final short IMG_ID_PROMPT_QUEREN_ON = NUMS++;
+	public static final short IMG_ID_PROMPT_QUEREN = NUMS++;
+	public static final short wave = NUMS++;
 
 	public static final byte isfirst = 0;
 
@@ -409,7 +405,10 @@ public class Resource {
 			"/secondpage/zhongdu.png",
 
 			"/secondpage/heroskillsrc.png", "/secondpage/soldier121.png",
-			"/secondpage/soldier122.png", "/secondpage/saybox.png"
+			"/secondpage/soldier122.png", "/secondpage/saybox.png",
+			"/recharge/czbg.png", "/recharge/czbg_.png",
+			"/prompt/popup_bg.png", "/prompt/queren_on.png",
+			"/prompt/queren.png", "/secondpage/wave.png"
 
 	};
 
@@ -422,6 +421,10 @@ public class Resource {
 			}
 		}
 		return images[id];
+	}
+
+	public static void releaseImage(int resId) {
+		images[resId] = null;
 	}
 
 	public static void clearIdPic() {

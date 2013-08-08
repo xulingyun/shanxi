@@ -28,6 +28,16 @@ public class PlayerProp {
 	/*道具价格*/
 	private int price;
 	
+	private String propCode;
+	
+
+	public String getPropCode() {
+		return propCode;
+	}
+
+	public void setPropCode(String propCode) {
+		this.propCode = propCode;
+	}
 
 	public int getFeeCode() {
 		return feeCode;

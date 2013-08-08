@@ -5,6 +5,24 @@ public class Myself {
 	long exp;
 	long money;
 	int nengliang;
+	int countAward = 1;
+	int countTongtianta = 1;
+
+	public int getCountAward() {
+		return countAward;
+	}
+
+	public void setCountAward(int countAward) {
+		this.countAward = countAward;
+	}
+
+	public int getCountTongtianta() {
+		return countTongtianta;
+	}
+
+	public void setCountTongtianta(int countTongtianta) {
+		this.countTongtianta = countTongtianta;
+	}
 
 	public int getLevel() {
 		return level;
@@ -45,10 +63,9 @@ public class Myself {
 		this.nengliang = 20;
 	}
 
-	/*public Myself(int level, long exp, long money, int nengliang) {
-		this.level = level;
-		this.exp = exp;
-		this.money = money;
-		this.nengliang = nengliang;
-	}*/
+	/*
+	 * public Myself(int level, long exp, long money, int nengliang) {
+	 * this.level = level; this.exp = exp; this.money = money; this.nengliang =
+	 * nengliang; }
+	 */
 }

@@ -54,10 +54,6 @@ public class CreatArray {
 	public boolean sss() {
 		sum = 0;
 		vectorArray();
-		des(v1, "v1");
-		des(v2, "v2");
-		des(v3, "v3");
-		des(v4, "v4");
 		if (v1.isEmpty() && v2.isEmpty() && v3.isEmpty() && v4.isEmpty()) {
 			canMove = false;
 			GameEngine.state = true;
@@ -91,15 +87,6 @@ public class CreatArray {
 		return canMove;
 	}
 
-	public void des(Vector v, String ss) {
-		String s = ss + "***";
-		for (int i = 0; i < v.size(); i++) {
-			s += "(" + ((Soldier) v.elementAt(i)).getX()
-					+ ((Soldier) v.elementAt(i)).getY() + ")";
-		}
-		System.out.println(s);
-	}
-
 	public void setIdPic(Soldier[][] idPic) {
 		this.idPic = idPic;
 	}
@@ -116,7 +103,6 @@ public class CreatArray {
 						Resource.savaSelcetSoldier[imgIndex - 1], 0);
 			}
 		}
-		pppp();
 		return idPic;
 	}
 
@@ -260,7 +246,6 @@ public class CreatArray {
 			}
 			CreatArray.sum = 0;
 		}
-		pppp();
 		GameEngine.add = 0;
 	}
 
@@ -274,22 +259,5 @@ public class CreatArray {
 		v7.removeAllElements();
 		v8.removeAllElements();
 		soldierKindArray = null;
-	}
-
-	public void pppp() {
-		System.out
-				.println("*****************************************************");
-		String s = "";
-		for (int i = 0; i < 7; i++) {
-			s = "[";
-			for (int k = 0; k < 4; k++) {
-				if (idPic[i][k] == null)
-					s += "-1,";
-				else
-					s += idPic[i][k].getKind() + ",";
-			}
-			s += "]";
-			System.out.println(s);
-		}
 	}
 }

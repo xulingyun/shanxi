@@ -6,8 +6,6 @@ import javax.microedition.midlet.MIDletStateChangeException;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import test.ItvGame.RespWapper;
-
 public class TestG extends MIDlet {
 
 	public static TestG instance;

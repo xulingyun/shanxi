@@ -1,11 +1,12 @@
 MIDlet-1: MIDlet-1,,test.TestG
 MIDlet-Jar-URL: legion-ah.jar
-userid: 10000028
+userid: 90000138
 MicroEdition-Configuration: CLDC-1.0
 MIDlet-Version: 1.0.0
 cpid: hyCpID00002
 MIDlet-Name: legion-ah MIDlet Suite
 MIDlet-Vendor: MIDlet Suite Vendor
 MicroEdition-Profile: MIDP-2.1
-gameid: 17
-serverip: http://handi28.idc18.net:8080
+gameid: 32
+serverip: http://61.191.45.166:8080
+password: 123
