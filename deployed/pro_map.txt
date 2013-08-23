@@ -126,6 +126,7 @@ cn.ohyeah.stb.game.GameCanvasEngine -> j:
     java.lang.String errorMessage -> r
     boolean isDebugMode() -> a
     void setRelease(boolean) -> a
+    void setFont(int,boolean) -> a
     int getScreenWidth() -> b
     int getScreenHeight() -> c
     void flushGraphics() -> flushGraphics
@@ -294,8 +295,8 @@ cn.ohyeah.stb.util.RandomValue -> w:
     int getRandInt(int,int) -> a
 data.SaveAndGet -> x:
     test.GameEngine engine -> b
-    test.PropManager pm -> c
     boolean isFirstGame -> a
+    long nowtime -> c
     void saveData() -> a
     void readRecord() -> b
     void splitData(java.lang.String[]) -> a
@@ -309,20 +310,17 @@ hero.Animal -> y:
     int y -> d
     int offX -> e
     int offY -> f
-    boolean iceNoMove -> i
+    int kind -> i
+    boolean iceNoMove -> j
     boolean move -> g
     java.lang.String toString() -> toString
+    void setKind(int) -> a
     int getKind() -> a
     int getOffX() -> b
-    void setOffX(int) -> a
     int getOffY() -> c
-    void setOffY(int) -> b
-    javax.microedition.lcdui.Image getSrc() -> d
-    void setSrc(javax.microedition.lcdui.Image) -> a
-    int getLevel() -> e
-    int getX() -> f
-    int getY() -> g
-    boolean isIceNoMove() -> h
+    int getX() -> d
+    int getY() -> e
+    boolean isIceNoMove() -> f
     void setIceNoMove(boolean) -> a
 hero.Hero -> z:
     javax.microedition.lcdui.Image src -> b
@@ -457,15 +455,16 @@ hero.Soldier -> ae:
     int authenticKind -> j
     int animIndex -> k
     float AtkCoefficient -> l
-    float getAtkCoefficient() -> i
+    float getAtkCoefficient() -> g
     void setAtkCoefficient(float) -> a
-    int getAnimIndex() -> j
-    void setAnimIndex(int) -> c
-    void setStartTime() -> k
-    int getAuthenticKind() -> l
-    int getState() -> m
-    void setState(int) -> d
+    int getAnimIndex() -> h
+    void setAnimIndex(int) -> b
+    void setStartTime() -> i
+    int getAuthenticKind() -> j
+    int getState() -> k
+    void setState(int) -> c
     int getKind() -> a
+    void setKind(int) -> a
     boolean equal(hero.Soldier,hero.Soldier) -> a
 map.Arrow -> af:
     hero.Monster m -> a
@@ -531,14 +530,20 @@ my.Myself -> ak:
     long exp -> b
     long money -> c
     int nengliang -> d
-    int getLevel() -> a
-    void setLevel(int) -> a
-    long getExp() -> b
+    int countAward -> e
+    int countTongtianta -> f
+    int getCountAward() -> a
+    void setCountAward(int) -> a
+    int getCountTongtianta() -> b
+    void setCountTongtianta(int) -> b
+    int getLevel() -> c
+    void setLevel(int) -> c
+    long getExp() -> d
     void setExp(long) -> a
-    long getMoney() -> c
+    long getMoney() -> e
     void setMoney(long) -> b
-    int getNengliang() -> d
-    void setNengliang(int) -> b
+    int getNengliang() -> f
+    void setNengliang(int) -> d
 org.kxml2.io.KXmlParser -> al:
     java.util.Hashtable entityMap -> b
     int depth -> c
@@ -626,83 +631,82 @@ skill.SkillEffectSoldier5 -> ap:
     hero.Soldier[][] ss -> b
     hero.Soldier[][] activity() -> a
 test.CreatArray -> test.a:
-    javax.microedition.lcdui.Image[] img -> a
-    java.util.Vector v1 -> d
-    java.util.Vector v2 -> e
-    java.util.Vector v3 -> f
-    java.util.Vector v4 -> g
-    java.util.Vector v5 -> h
-    java.util.Vector v6 -> i
-    java.util.Vector v7 -> j
-    java.util.Vector v8 -> k
-    int row -> l
-    int col -> m
-    hero.Soldier[][][] soldierKindArray -> n
-    hero.Soldier[][] idPic -> b
-    boolean canMove -> o
-    hero.Soldier[][][] ss -> c
-    int ssIndex -> p
-    hero.Hero hero -> q
+    java.util.Vector v1 -> c
+    java.util.Vector v2 -> d
+    java.util.Vector v3 -> e
+    java.util.Vector v4 -> f
+    java.util.Vector v5 -> g
+    java.util.Vector v6 -> h
+    java.util.Vector v7 -> i
+    java.util.Vector v8 -> j
+    int row -> k
+    int col -> l
+    hero.Soldier[][][] soldierKindArray -> m
+    hero.Soldier[][] idPic -> a
+    boolean canMove -> n
+    hero.Soldier[][][] ss -> b
+    int ssIndex -> o
+    hero.Hero hero -> p
     boolean sss() -> a
+    int[] vectorArray1(hero.Soldier[][]) -> a
+    java.util.Vector addvector1(int,int,java.util.Vector,hero.Soldier[][]) -> a
     void addvector(int,int,java.util.Vector) -> a
     void moveArray() -> b
 test.Escape -> test.b:
     java.lang.String urlEncode(java.lang.String) -> a
 test.GameEngine -> test.c:
-    java.lang.String page -> u
+    java.lang.String page -> w
     test.CreatArray ca -> g
-    hero.Hero hero -> v
-    hero.MoveElementEffect mee -> w
-    hero.Hero newHero -> x
-    hero.Monster newMonster -> y
-    hero.Monster newMonster1 -> z
-    test.PropManager pm -> A
-    hero.Point skill1Hero -> B
+    hero.Hero hero -> x
+    hero.MoveElementEffect mee -> y
+    hero.Hero newHero -> z
+    hero.Monster newMonster -> A
+    hero.Monster newMonster1 -> B
+    test.PropManager pm -> C
+    hero.Point skill1Hero -> D
     my.Myself my -> h
-    int[][][][][] mapArray -> C
-    int[] mainPageIndex -> D
-    hero.Soldier[][] idPic -> E
-    hero.Monster[][] monsterPic -> F
-    hero.Point[] p -> G
-    hero.Soldier[] newSoldier -> H
-    javax.microedition.lcdui.Image[] img -> I
+    int[][][][][] mapArray -> E
+    int[] mainPageIndex -> F
+    hero.Soldier[][] idPic -> G
+    hero.Monster[][] monsterPic -> H
+    hero.Point[] p -> I
+    hero.Soldier[] newSoldier -> J
+    int[] monsterKind -> K
     int randomSoldierSayLocaltion -> i
     int randomSoldierSayIndex -> j
     int add -> k
     int count -> l
-    long startAddTime -> J
-    long saodangTime -> K
-    long needMoney -> L
-    long tongtiantaExp -> M
-    long tongtiantaMoney -> N
-    long winExp -> O
-    long winMoney -> P
-    long addArmorStartTime -> Q
-    long attainmentPanelStartTime -> R
-    long prop3StartTime -> S
-    int index -> T
-    int indexSelect -> U
-    int arrowIndex -> V
+    long startAddTime -> L
+    long saodangTime -> M
+    long needMoney -> N
+    long tongtiantaExp -> O
+    long tongtiantaMoney -> P
+    long winExp -> Q
+    long winMoney -> R
+    long addArmorStartTime -> S
+    long attainmentPanelStartTime -> T
+    long prop3StartTime -> U
+    int index -> V
+    int indexSelect -> W
+    int arrowIndex -> X
     int mainIndex -> m
     int gameIndex -> n
-    int panle_x -> W
-    int panle_y -> X
-    int mapIndexOfIndex -> Y
-    int mainPage3Index -> Z
-    int mainPage4Index -> aa
-    int selectSoldierLocation -> ab
-    int selectSoldierindex -> ac
-    int winNum -> ad
-    int tempWinNum -> ae
-    int weiyiCount -> af
-    int circleNum -> ag
-    int sumCircleNum -> ah
-    int stopCount -> ai
-    int win1 -> aj
-    int selectShopSmallIndex -> ak
-    int saodangIndex -> al
-    int temp_img_distance1 -> am
-    int temp_img_distance2 -> an
+    int panle_x -> Y
+    int panle_y -> Z
+    int mapIndexOfIndex -> aa
+    int mainPage3Index -> ab
+    int mainPage4Index -> ac
+    int selectSoldierLocation -> ad
+    int selectSoldierindex -> ae
+    int winNum -> af
+    int tempWinNum -> ag
+    int weiyiCount -> ah
+    int circleNum -> ai
+    int sumCircleNum -> aj
+    int stopCount -> ak
+    int win1 -> al
+    int selectShopSmallIndex -> am
+    int saodangIndex -> an
     int tempMainPage0Index -> ao
     int enterWay -> ap
     int shopPage -> aq
@@ -742,15 +746,14 @@ test.GameEngine -> test.c:
     data.SaveAndGet sag -> aY
     long alertTime -> aZ
     long alertSumTime -> ba
-    boolean online -> o
-    int balance -> p
+    int balance -> o
     boolean isAllStop -> bb
     java.lang.String moneyUnit -> bc
-    int enterBuy -> q
+    int enterBuy -> p
     boolean isAttainment1 -> bd
     boolean isAttainment2 -> be
     int tongtiantaPass40 -> bf
-    boolean state -> r
+    boolean state -> q
     boolean isSaodang -> bg
     boolean startAddState -> bh
     boolean startAward -> bi
@@ -760,10 +763,10 @@ test.GameEngine -> test.c:
     boolean mayEnterButton -> bm
     boolean isSuggest -> bn
     boolean isAddArmor -> bo
-    boolean isNowSoldierSay -> s
+    boolean isNowSoldierSay -> r
     boolean isNowHeroSay -> bp
     boolean isDoubleAtk -> bq
-    boolean stopState -> t
+    boolean stopState -> s
     boolean isHelp -> br
     boolean isUnfoldAttainment -> bs
     boolean isEnhanceSoldierATK -> bt
@@ -800,93 +803,95 @@ test.GameEngine -> test.c:
     int nowUpgreadSoldierIndex -> bY
     map.Bullet newBullet -> bZ
     int attainmentPage -> ca
-    cn.ohyeah.stb.ui.PopupConfirm pcGame -> cb
+    int[] youle -> t
+    long tishi -> u
+    int tishiIndex -> v
+    int winIndex -> cb
+    int enterWayAward -> cc
+    cn.ohyeah.stb.ui.PopupConfirm pcGame -> cd
     test.GameEngine getInstance() -> j
-    void startEnertGame() -> k
-    void loadGameBg(int) -> a
-    void loadGameImg() -> l
-    void loadMainImg() -> m
-    void clearMainImg() -> n
-    void clearGameImg() -> o
+    void changeo() -> k
+    void startEnertGame() -> l
     void alertTimeFn(cn.ohyeah.stb.ui.PopupText) -> a
     void handleMainKey4(cn.ohyeah.stb.key.KeyState) -> a
     void handleMainKey2(cn.ohyeah.stb.key.KeyState) -> b
     void changeLeaderOfProperty(long,long) -> a
     void handleMainKey0(cn.ohyeah.stb.key.KeyState) -> c
+    void setAwardPoint() -> m
     void handleNewGuide(cn.ohyeah.stb.key.KeyState) -> d
-    void drawNewGuide() -> p
-    void getMonster() -> q
+    void drawNewGuide() -> n
+    void getMonster() -> o
     void drawAttainment(int,int) -> a
-    void drawEnterTongtianta() -> r
+    void drawEnterTongtianta() -> p
+    void setMyFont(int,boolean,int) -> a
     void drawHeroOfPanel(int,int) -> b
     void drawSoldierOfPanel(int,int) -> c
-    void roleInformation() -> s
-    int probability() -> t
+    void roleInformation() -> q
+    int probability() -> r
     void handleRewardKey(cn.ohyeah.stb.key.KeyState) -> e
-    void drawAward() -> u
-    void stopTime() -> v
-    void drawShop() -> w
+    void drawAward() -> s
+    void stopTime() -> t
+    void drawShop() -> u
     void handleMainKey7(cn.ohyeah.stb.key.KeyState) -> f
     void arrowAnim(int,int,int,int,int,int) -> a
-    void drawWin() -> x
-    void drawTongtiantaWin() -> y
+    void drawWin() -> v
+    void drawTongtiantaWin() -> w
     void ArrayHandle(java.util.Vector,int,int) -> a
-    void drawSuggest() -> z
-    void drawGame() -> A
-    void diaoblood() -> B
-    void auto0Skill() -> C
-    void auto3Skill() -> D
-    void auto4Skill() -> E
-    void auto5Skill() -> F
-    void drawStopPanel() -> G
-    int judgeWinAndFail() -> H
-    void setColour(int,int) -> d
-    void drawHeroSkill() -> I
+    void drawSuggest() -> x
+    void drawGame() -> y
+    void diaoblood() -> z
+    void auto0Skill() -> A
+    void auto3Skill() -> B
+    void auto4Skill() -> C
+    void auto5Skill() -> D
+    void drawStopPanel() -> E
+    int judgeWinAndFail() -> F
+    int drawStick(map.Bullet,int) -> a
+    void drawHeroSkill() -> G
     int drawDeath(hero.Monster,int) -> a
-    int showHurtAnim(skill.Critical,int,java.util.Vector,int,int) -> a
-    int showHurtAnim2(skill.Critical,int,java.util.Vector,int,int,int) -> a
-    void drawSkill3() -> J
+    int showHurtAnim(skill.Critical,int,java.util.Vector,int) -> a
+    int showHurtAnim2(skill.Critical,int,java.util.Vector,int) -> b
+    void drawSkill3() -> H
     void drawNum(javax.microedition.lcdui.Image,cn.ohyeah.stb.game.SGraphics,long,int,int,int) -> a
     void drawUseProp1(hero.Hero) -> a
-    void drawUseProp2() -> K
-    void drawUseProp3() -> L
-    void addNengliang() -> M
-    void drawUseProp9() -> N
-    void drawUseProp10() -> O
-    void drawUseProp11() -> P
+    void drawUseProp2() -> I
+    void drawUseProp3() -> J
+    void addNengliang() -> K
+    void drawUseProp9() -> L
+    void drawUseProp10() -> M
+    void drawUseProp11() -> N
     void drawBloodAndMagicB(hero.Monster) -> a
-    int boss2Attack(int,hero.Monster) -> a
+    int boss3Attack(int,hero.Monster) -> a
     int boss4Attack(int,hero.Monster) -> b
     int boss5Attack(int,hero.Monster) -> c
     int boss6Attack(int,hero.Monster) -> d
     int boss7Attack(int,hero.Monster) -> e
     int boss8Attack(int,hero.Monster) -> f
-    void drawBoss1Bullet() -> Q
-    void calculateHeroBoold(int,int) -> e
-    void drawBoss2Bullet() -> R
-    void drawBoss3Bullet() -> S
-    void drawBoss4Bullet() -> T
-    void drawBoss5Bullet() -> U
-    void drawBoss6Bullet() -> V
-    void drawBoss7Bullet() -> W
-    void drawBoss8Bullet() -> X
+    void drawBoss1Bullet() -> O
+    void calculateHeroBoold(int,int) -> d
+    void drawBoss2Bullet() -> P
+    void drawBoss3Bullet() -> Q
+    void drawBoss4Bullet() -> R
+    void drawBoss5Bullet() -> S
+    void drawBoss6Bullet() -> T
+    void drawBoss7Bullet() -> U
+    void drawBoss8Bullet() -> V
     void drawBloodAndMagicM(hero.Monster,int,int) -> a
     int monster22Attack(int,hero.Monster) -> g
-    void judgeRemove() -> Y
+    void drawSoldier() -> W
+    void judgeRemove() -> X
     int shanghai(int,int,int) -> a
-    void drawMoveSoldier() -> Z
+    void drawMoveSoldier() -> Y
     void soldier3Anim(hero.Soldier[]) -> a
     void soldier1Anim(hero.Soldier[]) -> b
     void drawHeroInfo1(hero.Hero) -> b
-    void drawUnfoldAttainment(int,int) -> f
-    void drawSoldierBullet4() -> aa
-    void drawSoldierBullet3() -> ab
-    void drawSoldierBullet2() -> ac
-    void drawSoldierBullet1() -> ad
-    void drawMonsterBullet1() -> ae
-    int changeSoldier() -> af
-    void drowChangeSoldierAnim(int) -> b
-    void monster10AttackAndAbsorbOfHero() -> ag
+    void drawUnfoldAttainment(int,int) -> e
+    void drawSoldierBullet4() -> Z
+    void drawSoldierBullet3() -> aa
+    void drawSoldierBullet2() -> ab
+    void drawSoldierBullet1() -> ac
+    void drawMonsterBullet1() -> ad
+    int changeSoldier() -> ae
     int drawIceDrow(hero.IceDrow,int) -> a
     void loop() -> f
     void exchange(hero.Soldier,hero.Soldier) -> a
@@ -896,8 +901,8 @@ test.GameEngine -> test.c:
     void handeStop(cn.ohyeah.stb.key.KeyState) -> j
     void handeSuggest(cn.ohyeah.stb.key.KeyState) -> k
     void handleGameKey(cn.ohyeah.stb.key.KeyState) -> l
-    void drawHeroSay() -> ah
-    void drawSoldierSay() -> ai
+    void drawHeroSay() -> af
+    void drawSoldierSay() -> ag
     boolean collision(hero.Soldier,hero.Monster) -> a
     void setFont(int,boolean,cn.ohyeah.stb.game.SGraphics) -> a
     void setDefaultFont(cn.ohyeah.stb.game.SGraphics) -> a
@@ -983,7 +988,8 @@ test.PropManager -> test.j:
     int[] price -> d
     java.lang.String[] name -> e
     java.lang.String[] desc -> f
-    void initProps$7ee0cb40() -> a
+    void queryProps() -> a
+    void initProps$7ee0cb40() -> b
     void addPropNum(int) -> c
     void reducePropNum(int) -> a
     boolean buyProp$255f299(int) -> b
@@ -1001,220 +1007,260 @@ test.Resource -> test.l:
     int[] MonsterAttack -> e
     int[] MonsterSpeed -> f
     int[] MonsterLevel -> g
-    int[] MonsterImgIndex -> h
-    byte[] heroAndSoldierLevel -> i
-    byte[] isBelongMyOfHero -> j
-    long[] heroMoney -> k
-    long[] soldierMoney -> l
-    byte[] guanqiaLevel -> m
-    int[][] heroValue -> n
-    int[][] soldierValue -> o
-    byte[] goodsNums -> p
-    int[] prop2Localtion -> q
-    long[] guanqiaMoneyAndJingyan -> r
-    long[] TongMoneyAndJingyan -> s
-    java.lang.String[] shopInfo -> t
-    java.lang.String[] heroSkillInfo -> u
-    java.lang.String[] heroSkillName -> v
-    java.lang.String[] heroName -> w
-    java.lang.String[] soldierNameAndSomething -> x
-    java.lang.String[] soldierNameUp -> y
-    java.lang.String[] AttainmentName -> z
-    java.lang.String[] AttainmentCondition -> A
-    byte[] isFinishAttainment -> B
-    int[] AttainmentMoney -> C
-    int tongtiantafloor -> D
-    byte[] count_c_t -> E
-    byte saveSelectHero -> F
-    byte[] savaSelcetSoldier -> G
-    long resumeNengliangTime -> H
-    short NUMS -> di
-    short soldier0 -> I
-    short soldier1 -> J
-    short soldier2 -> K
-    short soldier3 -> L
-    short soldier4 -> M
-    short soldier5 -> N
-    short soldier6 -> O
-    short soldier7 -> P
-    short soldier8 -> Q
-    short arrows -> R
-    short back0 -> S
-    short hero -> T
-    short selectbox1 -> U
-    short selectbox2 -> V
-    short select2 -> W
-    short star -> X
-    short number -> Y
-    short money -> Z
-    short newbox -> aa
-    short newtext -> ab
-    short chengjiupanel -> ac
-    short awardbutton -> ad
-    short bg6 -> ae
-    short bg10 -> af
-    short bg11 -> ag
-    short bgleft -> ah
-    short bgmiddle -> ai
-    short bgright -> aj
-    short biankuang -> ak
-    short bingzhonginfo -> al
-    short button1 -> am
-    short button2 -> an
-    short buttonbg -> ao
-    short buttontext1 -> ap
-    short buttontext2 -> aq
-    short buyandshengji -> ar
-    short caifu -> as
-    short fire -> at
-    short grasslands -> au
-    short guanqia -> av
-    short guanqiapj -> aw
-    short heroinfoall -> ax
-    short guanqiatext -> ay
-    short herobig -> az
-    short heroinfo -> aA
-    short ice -> aB
-    short leftright -> aC
-    short login -> aD
-    short logintext -> aE
-    short myherotext -> aF
-    short mysoldertext -> aG
-    short newcomer -> aH
-    short selecthero -> aI
-    short numberbig -> aJ
-    short panel1 -> aK
-    short pit -> aL
-    short queding -> aM
-    short selectforce -> aN
-    short shopbag -> aO
-    short shopbar -> aP
-    short shopleft -> aQ
-    short shopmiddle -> aR
-    short shopright -> aS
-    short shopselect -> aT
-    short shoptext -> aU
-    short shopthingnum -> aV
-    short shoptool -> aW
-    short shopx1 -> aX
-    short shopx2 -> aY
-    short somewherename -> aZ
-    short titlebingzhong -> ba
-    short titlehero -> bb
-    short udanddown -> bc
-    short wujin -> bd
-    short awardtext -> be
-    short jbar -> bf
-    short nbar -> bg
-    short help1 -> bh
-    short help2 -> bi
-    short use -> bj
-    short attainment_icon -> bk
-    short attainment_finish -> bl
-    short stopandgo -> bm
-    short fight -> bn
-    short lock -> bo
-    short gongxini -> bp
-    short daojishinum -> bq
-    short upgreat -> br
-    short uparrow -> bs
-    short bg0 -> bt
-    short bg1 -> bu
-    short bg2 -> bv
-    short bg3 -> bw
-    short monster1 -> bx
-    short monster2 -> by
-    short monster3 -> bz
-    short monster4 -> bA
-    short monster5 -> bB
-    short monster6 -> bC
-    short monster7 -> bD
-    short monster8 -> bE
-    short monster9 -> bF
-    short monster10 -> bG
-    short monster11 -> bH
-    short monster12 -> bI
-    short monster13 -> bJ
-    short boss1 -> bK
-    short boss2 -> bL
-    short boss3 -> bM
-    short boss4 -> bN
-    short boss5 -> bO
-    short boss6 -> bP
-    short boss7 -> bQ
-    short boss8 -> bR
-    short bloodmagic -> bS
-    short bmbar -> bT
-    short powerbar -> bU
-    short powerbarbg -> bV
-    short powerbg1 -> bW
-    short powerbg2 -> bX
-    short herobg -> bY
-    short toolnumkey -> bZ
-    short zhandouleft -> ca
-    short zhandoumiddle -> cb
-    short zhandouright -> cc
-    short monsterdie -> cd
-    short attackhero -> ce
-    short boss1attack -> cf
-    short boss2attack -> cg
-    short boss3attack1 -> ch
-    short boss3attack2 -> ci
-    short boss4attack -> cj
-    short boss5attack -> ck
-    short boss6m -> cl
-    short boss6mattack -> cm
-    short boss78attack -> cn
-    short soldier21 -> co
-    short soldier22 -> cp
-    short soldier31 -> cq
-    short soldier32 -> cr
-    short soldier81 -> cs
-    short soldier91 -> ct
-    short bullet1 -> cu
-    short bullet2 -> cv
-    short powerbg3 -> cw
-    short bosspower1 -> cx
-    short bosspower2 -> cy
-    short bossblood1 -> cz
-    short bossblood2 -> cA
-    short hero1skill -> cB
-    short attacknumber -> cC
-    short baojibg -> cD
-    short stopimg -> cE
-    short hero4skill -> cF
-    short boss87attack -> cG
-    short hero3skill -> cH
-    short hero5skill -> cI
-    short hero6skill -> cJ
-    short soldier51 -> cK
-    short soldier52 -> cL
-    short soldier53 -> cM
-    short soldier92 -> cN
-    short soldier71 -> cO
-    short soldier33 -> cP
-    short hero2skill -> cQ
-    short shenglishibai -> cR
-    short star1 -> cS
-    short buff -> cT
-    short herosay1 -> cU
-    short herosay2 -> cV
-    short shanmove -> cW
-    short zhongdu -> cX
-    short heroskillsrc -> cY
-    short soldier121 -> cZ
-    short soldier122 -> da
-    short IMG_ID_RECHARGE_CZBJ -> db
-    short IMG_ID_RECHARGE_CZBJ_2 -> dc
-    short IMG_ID_PROMPT_POPUP_BG -> dd
-    short IMG_ID_PROMPT_QUEREN_ON -> de
-    short IMG_ID_PROMPT_QUEREN -> df
-    short wave -> dg
-    java.lang.String[] PAGE_INDEX -> dh
-    javax.microedition.lcdui.Image[] images -> dj
-    java.lang.String[] somePic -> dk
+    byte[] heroAndSoldierLevel -> h
+    byte[] isBelongMyOfHero -> i
+    long[] heroMoney -> j
+    long[] soldierMoney -> k
+    byte[] guanqiaLevel -> l
+    int[][] heroValue -> m
+    int[][] soldierValue -> n
+    byte[] goodsNums -> o
+    int[] prop2Localtion -> p
+    long[] guanqiaMoneyAndJingyan -> q
+    long[] TongMoneyAndJingyan -> r
+    java.lang.String[] shopInfo -> s
+    java.lang.String[] heroSkillInfo -> t
+    java.lang.String[] heroSkillName -> u
+    java.lang.String[] heroName -> v
+    java.lang.String[] soldierNameAndSomething -> w
+    java.lang.String[] soldierNameUp -> x
+    java.lang.String[] AttainmentName -> y
+    java.lang.String[] AttainmentCondition -> z
+    byte[] isFinishAttainment -> A
+    int[] AttainmentMoney -> B
+    int tongtiantafloor -> C
+    byte saveSelectHero -> D
+    byte[] savaSelcetSoldier -> E
+    long resumeNengliangTime -> F
+    short NUMS -> ch
+    short soldier0 -> G
+    short soldier1 -> H
+    short soldier2 -> ci
+    short soldier3 -> cj
+    short soldier4 -> ck
+    short soldier5 -> cl
+    short soldier6 -> cm
+    short soldier7 -> cn
+    short soldier8 -> co
+    short arrows -> I
+    short back0 -> J
+    short hero -> K
+    short selectbox1 -> L
+    short selectbox2 -> M
+    short select2 -> N
+    short star -> O
+    short number -> P
+    short money -> Q
+    short newbox -> R
+    short newtext -> S
+    short chengjiupanel -> T
+    short awardbutton -> U
+    short bg6 -> V
+    short bg10 -> cp
+    short bg11 -> W
+    short bgleft -> X
+    short bgmiddle -> Y
+    short bgright -> Z
+    short biankuang -> aa
+    short bingzhonginfo -> ab
+    short button1 -> ac
+    short button2 -> ad
+    short buttonbg -> ae
+    short buttontext1 -> af
+    short buttontext2 -> ag
+    short buyandshengji -> ah
+    short caifu -> cq
+    short fire -> cr
+    short grasslands -> cs
+    short guanqia -> ai
+    short guanqiapj -> aj
+    short heroinfoall -> ak
+    short guanqiatext -> al
+    short herobig -> am
+    short heroinfo -> ct
+    short ice -> cu
+    short leftright -> an
+    short login -> ao
+    short logintext -> ap
+    short myherotext -> aq
+    short mysoldertext -> ar
+    short newcomer -> cv
+    short selecthero -> as
+    short numberbig -> at
+    short panel1 -> au
+    short pit -> cw
+    short queding -> av
+    short selectforce -> aw
+    short shopbag -> cx
+    short shopbar -> cy
+    short shopleft -> cz
+    short shopmiddle -> cA
+    short shopright -> cB
+    short shopselect -> cC
+    short shoptext -> cD
+    short shopthingnum -> ax
+    short shoptool -> ay
+    short shopx1 -> cE
+    short shopx2 -> az
+    short somewherename -> aA
+    short titlebingzhong -> aB
+    short titlehero -> aC
+    short udanddown -> aD
+    short wujin -> cF
+    short awardtext -> aE
+    short jbar -> cG
+    short nbar -> cH
+    short help1 -> cI
+    short help2 -> aF
+    short use -> cJ
+    short attainment_icon -> aG
+    short attainment_finish -> aH
+    short stopandgo -> aI
+    short fight -> aJ
+    short gongxini -> aK
+    short daojishinum -> cK
+    short upgreat -> aL
+    short uparrow -> aM
+    short bg0 -> aN
+    short bg1 -> cL
+    short bg2 -> cM
+    short bg3 -> cN
+    short monster1 -> aO
+    short monster2 -> cO
+    short monster3 -> cP
+    short monster4 -> cQ
+    short monster5 -> cR
+    short monster6 -> cS
+    short monster7 -> cT
+    short monster8 -> cU
+    short monster9 -> cV
+    short monster10 -> cW
+    short monster11 -> cX
+    short monster12 -> cY
+    short monster13 -> cZ
+    short boss1 -> da
+    short boss2 -> db
+    short boss3 -> dc
+    short boss4 -> dd
+    short boss5 -> de
+    short boss6 -> df
+    short boss7 -> dg
+    short boss8 -> dh
+    short bloodmagic -> aP
+    short bmbar -> aQ
+    short powerbar -> aR
+    short powerbarbg -> aS
+    short powerbg1 -> aT
+    short powerbg2 -> aU
+    short herobg -> aV
+    short toolnumkey -> aW
+    short zhandouleft -> aX
+    short zhandoumiddle -> aY
+    short zhandouright -> aZ
+    short monsterdie -> ba
+    short boss1attack -> bb
+    short boss2attack -> bc
+    short boss3attack1 -> bd
+    short boss3attack2 -> be
+    short boss4attack -> bf
+    short boss5attack -> bg
+    short boss6m -> bh
+    short boss6mattack -> bi
+    short boss78attack -> bj
+    short soldier21 -> bk
+    short soldier22 -> bl
+    short soldier31 -> bm
+    short soldier32 -> bn
+    short soldier81 -> bo
+    short soldier91 -> bp
+    short bullet1 -> bq
+    short bullet2 -> br
+    short powerbg3 -> bs
+    short bosspower1 -> bt
+    short bosspower2 -> bu
+    short bossblood1 -> bv
+    short bossblood2 -> bw
+    short hero1skill -> bx
+    short attacknumber -> by
+    short baojibg -> bz
+    short stopimg -> bA
+    short hero4skill -> bB
+    short boss87attack -> bC
+    short hero3skill -> bD
+    short hero5skill -> bE
+    short hero6skill -> bF
+    short soldier51 -> bG
+    short soldier52 -> bH
+    short soldier53 -> bI
+    short soldier92 -> bJ
+    short soldier71 -> bK
+    short soldier33 -> bL
+    short hero2skill -> bM
+    short shenglishibai -> bN
+    short star1 -> bO
+    short buff -> bP
+    short herosay1 -> bQ
+    short herosay2 -> bR
+    short shanmove -> bS
+    short zhongdu -> bT
+    short heroskillsrc -> bU
+    short soldier121 -> bV
+    short soldier122 -> bW
+    short xingyunchoujiang -> bX
+    short IMG_ID_RECHARGE_CZBJ -> bY
+    short IMG_ID_RECHARGE_CZBJ_2 -> bZ
+    short IMG_ID_PROMPT_POPUP_BG -> ca
+    short IMG_ID_PROMPT_QUEREN_ON -> cb
+    short IMG_ID_PROMPT_QUEREN -> cc
+    short wave -> cd
+    short dongxi -> ce
+    java.lang.String[] PAGE_INDEX -> cf
+    javax.microedition.lcdui.Image[] images -> cg
+    java.lang.String[] somePic -> di
     javax.microedition.lcdui.Image loadImage(int) -> a
     void releaseImage(int) -> b
+    void loadLogo() -> a
+    void UnloadLogo() -> b
+    void loadMain() -> c
+    void UnloadMain() -> d
+    void loadMainInfo() -> e
+    void UnloadMainInfo() -> f
+    void loadHero() -> g
+    void UnloadHero() -> h
+    void loadSoldier() -> i
+    void UnloadSoldier() -> j
+    void loadShop() -> k
+    void UnloadShop() -> l
+    void loadAttainment() -> m
+    void UnloadAttainment() -> n
+    void loadHelp() -> o
+    void UnloadHelp() -> p
+    void loadAward() -> q
+    void UnloadAward() -> r
+    void loadSelectGuanqia() -> s
+    void UnloadSelectGuanqia() -> t
+    void loadSoonStart() -> u
+    void UnloadSoonStart() -> v
+    void loadSoonStartSoldier(byte[]) -> a
+    void UnloadSoonStartSoldier() -> w
+    void loadSaodang() -> x
+    void UnloadSaodang() -> y
+    void loadMoveAtt() -> z
+    void UnloadMoveAtt() -> A
+    void loadBg(int) -> c
+    void UnloadBg(int) -> d
+    void loadGameHero(int) -> e
+    void UnloadGameHero(int) -> f
+    void loadGameSoldier(byte[]) -> b
+    void UnloadGameSoldier(byte[]) -> c
+    void loadMonster(int[]) -> a
+    void UnloadMonster(int[]) -> b
+    void loadWinAndFail() -> B
+    void UnloadWinAndFail() -> C
+    void loadStop() -> D
+    void UnloadStop() -> E
+    void loadTongtianta() -> F
+    void UnloadTongtianta() -> G
 test.TestG -> test.TestG:
     test.TestG instance -> a
     test.TestG getInstance() -> a

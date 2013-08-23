@@ -6,7 +6,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import test.ItvGame.RespWapper;
 
-import cn.ohyeah.stb.game.EngineService;
 import cn.ohyeah.stb.game.SGraphics;
 import cn.ohyeah.stb.key.KeyCode;
 import cn.ohyeah.stb.key.KeyState;
@@ -44,7 +43,6 @@ public class Recharge {
 		int h = 55, w = czbj_2.getWidth();
 		int mapx = WIDTH_HALF - czbj.getWidth() / 2;
 		int mapy = HEIGHT_HALF - czbj.getHeight() / 2;
-
 		g.drawImage(czbj, mapx, mapy, 20);
 		g.setColor(0xffff00);
 		GameEngine.getInstance().setFont(20, true, g);

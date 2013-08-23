@@ -62,10 +62,4 @@ public class Myself {
 		this.money = 0;
 		this.nengliang = 20;
 	}
-
-	/*
-	 * public Myself(int level, long exp, long money, int nengliang) {
-	 * this.level = level; this.exp = exp; this.money = money; this.nengliang =
-	 * nengliang; }
-	 */
 }

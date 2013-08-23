@@ -108,9 +108,11 @@ public class SaveAndGet {
 		try {
 			rw = iread.crossQueryMulty(1);
 			if (rw.is_ret()) {
-				pm.queryProps();
 				ss[0] = rw.getCrossCodePoints().trim();
 				System.out.println("信息1：" + ss[0]);
+			}
+			if (ss[0].equals("")) {
+				return;
 			}
 			rw = iread.crossQueryMulty(2);
 			if (rw.is_ret()) {
@@ -128,7 +130,10 @@ public class SaveAndGet {
 				ss[3] = rw.getCrossCodePoints().trim();
 				System.out.println("信息4：" + ss[3]);
 			}
-			splitData(ss);
+			if (!ss[0].equals("") && !ss[1].equals("") && !ss[2].equals("")
+					&& !ss[3].equals("")) {
+				splitData(ss);
+			}
 		} catch (XmlPullParserException e) {
 			e.printStackTrace();
 		}
@@ -140,9 +145,14 @@ public class SaveAndGet {
 		sss[1] = ConvertUtil.split(ss[1], ",");
 		sss[2] = ConvertUtil.split(ss[2], ",");
 		sss[3] = ConvertUtil.split(ss[3], ",");
+
+		String gh = "";
+		for (int jb = 0; jb < sss[0].length; jb++) {
+			gh += sss[0][jb];
+		}
+
 		int i = 0;
 		int j = 0;
-
 		if (Byte.parseByte(sss[0][i++].trim()) == 0) {
 			isFirstGame = false;
 		} else {
@@ -151,7 +161,7 @@ public class SaveAndGet {
 		Resource.tongtiantafloor = Integer.parseInt(sss[0][i++].trim());
 		Resource.resumeNengliangTime = Long.parseLong(sss[0][i++].trim());
 		engine.my.setLevel(Integer.parseInt(sss[0][i++].trim()));
-		engine.my.setExp(Integer.parseInt(sss[0][i++].trim()));
+		engine.my.setExp(Long.parseLong(sss[0][i++].trim()));
 		engine.my.setMoney(Long.parseLong(sss[0][i++].trim()));
 		engine.my.setNengliang(Integer.parseInt(sss[0][i++].trim()));
 		engine.my.setCountAward(Integer.parseInt(sss[0][i++].trim()));
@@ -187,11 +197,8 @@ public class SaveAndGet {
 			Resource.isFinishAttainment[i] = Byte.parseByte(sss[3][j + i]
 					.trim());
 		}
-
 		long nowTime = System.currentTimeMillis();
 		long timeSum = nowTime - Resource.resumeNengliangTime;
-		System.out.println("Resource.resumeNengliangTime===>"
-				+ Resource.resumeNengliangTime);
 		engine.my.setNengliang(engine.my.getNengliang()
 				+ (int) (timeSum / 1000 / 60 / 30));
 		if (engine.my.getNengliang() > Upgrade.upgradeLeaderNengliang(engine.my

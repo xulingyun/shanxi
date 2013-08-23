@@ -4,17 +4,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import test.ItvGame.RespWapper;
 
-import cn.ohyeah.stb.game.Recharge;
-import cn.ohyeah.stb.game.ServiceWrapper;
 import cn.ohyeah.stb.res.UIResource;
-import cn.ohyeah.stb.ui.PopupConfirm;
 import cn.ohyeah.stb.ui.PopupText;
-import cn.ohyeah.stb.util.ConvertUtil;
-import data.SaveAndGet;
 
 public class PropManager {
 
-	private GameEngine engine;
 	public PlayerProp[] props;
 	private int[] propIds = { 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
 			146, 147, 148, 149, 150 };
@@ -30,8 +24,7 @@ public class PropManager {
 			"使用后增加20点能量。", "通天塔战斗失败避免损失。", "增加所有士兵10%攻击力。", "增加英雄20点防御力。",
 			"增加英雄20%生命。", "兑换10000金币。", "重新抽奖。", "加快扫荡的速度", "战斗复活", "可以继续去无极之塔" };
 
-	public PropManager(GameEngine e) {
-		this.engine = e;
+	public PropManager() {
 	}
 
 	/* 查询玩家道具 */
@@ -137,7 +130,8 @@ public class PropManager {
 
 	public boolean buyProp(int propId, int propCount) {
 		PlayerProp pp = getPropById(propId);
-		System.out.println("余额=" + GameEngine.balance);
+		System.out.println("余额=" + GameEngine.balance + "**"
+				+ (GameEngine.balance < pp.getPrice()));
 		if (GameEngine.balance < pp.getPrice()) {
 			GameEngine.mainIndex = 21;
 			return false;
