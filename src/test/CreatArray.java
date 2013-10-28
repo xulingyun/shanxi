@@ -57,6 +57,7 @@ public class CreatArray {
 			GameEngine.youle = null;
 			return canMove;
 		} else {
+			GameEngine.tishi = System.currentTimeMillis();
 			GameEngine.state = false;
 			GameEngine.youle = null;
 			if ((v1.size() >= 5 || v2.size() >= 5 || v3.size() >= 5 || v4
@@ -109,11 +110,13 @@ public class CreatArray {
 		return idPic;
 	}
 
-	public int[] vectorArray1(Soldier[][] s) {
+	public int[][] vectorArray1(Soldier[][] s) {
 		Vector v = new Vector();
-		int[] temp_xy = new int[2];
+		int[][] temp_xy;
 		for (int ii = 0; ii < row; ii++) {
 			for (int jj = 0; jj < col - 1; jj++) {
+				if (s[ii][jj] == null || s[ii][jj + 1] == null)
+					break;
 				int temp = s[ii][jj].getKind();
 				s[ii][jj].setKind(s[ii][jj + 1].getKind());
 				s[ii][jj + 1].setKind(temp);
@@ -121,11 +124,39 @@ public class CreatArray {
 					for (int j = 0; j < col; j++) {
 						v = addvector1(i, j, v, s);
 						if (v.size() != 0) {
+							int index = 0;
+							int dif = 0;
+							temp_xy = new int[v.size() + 1][2];
 							temp = s[ii][jj].getKind();
 							s[ii][jj].setKind(s[ii][jj + 1].getKind());
 							s[ii][jj + 1].setKind(temp);
-							temp_xy[0] = ii;
-							temp_xy[1] = jj;
+							temp_xy[index][0] = ii;
+							temp_xy[index++][1] = jj;
+							temp_xy[index][0] = ii;
+							temp_xy[index++][1] = jj + 1;
+							for (int jk = 0; jk < v.size(); jk++) {
+								Soldier s1 = (Soldier) v.elementAt(jk);
+								if (s1.getX() == temp_xy[0][0]
+										&& s1.getY() == temp_xy[0][1]) {
+									dif = 0;
+									continue;
+								} else if (s1.getX() == temp_xy[1][0]
+										&& s1.getY() == temp_xy[1][1]) {
+									dif = 1;
+									continue;
+								} else {
+									if (index == v.size() + 1)
+										break;
+									temp_xy[index][0] = s1.getX();
+									temp_xy[index++][1] = s1.getY();
+								}
+							}
+							if (dif == 1) {
+								temp_xy[1][0] = ii;
+								temp_xy[1][1] = jj;
+								temp_xy[0][0] = ii;
+								temp_xy[0][1] = jj + 1;
+							}
 							return temp_xy;
 						} else if (i == row - 1 && j == col - 1) {
 							temp = s[ii][jj].getKind();
@@ -138,6 +169,8 @@ public class CreatArray {
 		}
 		for (int ii = 0; ii < row - 1; ii++) {
 			for (int jj = 0; jj < col; jj++) {
+				if (s[ii][jj] == null || s[ii + 1][jj] == null)
+					break;
 				int temp = s[ii][jj].getKind();
 				s[ii][jj].setKind(s[ii + 1][jj].getKind());
 				s[ii + 1][jj].setKind(temp);
@@ -145,11 +178,39 @@ public class CreatArray {
 					for (int j = 0; j < col; j++) {
 						v = addvector1(i, j, v, s);
 						if (v.size() != 0) {
+							int index = 0;
+							int dif = 0;
+							temp_xy = new int[v.size() + 1][2];
 							temp = s[ii][jj].getKind();
 							s[ii][jj].setKind(s[ii + 1][jj].getKind());
 							s[ii + 1][jj].setKind(temp);
-							temp_xy[0] = ii;
-							temp_xy[1] = jj;
+							temp_xy[index][0] = ii;
+							temp_xy[index++][1] = jj;
+							temp_xy[index][0] = ii + 1;
+							temp_xy[index++][1] = jj;
+							for (int jk = 0; jk < v.size(); jk++) {
+								Soldier s1 = (Soldier) v.elementAt(jk);
+								if (s1.getX() == temp_xy[0][0]
+										&& s1.getY() == temp_xy[0][1]) {
+									dif = 0;
+									continue;
+								} else if (s1.getX() == temp_xy[1][0]
+										&& s1.getY() == temp_xy[1][1]) {
+									dif = 1;
+									continue;
+								} else {
+									if (index == v.size() + 1)
+										break;
+									temp_xy[index][0] = s1.getX();
+									temp_xy[index++][1] = s1.getY();
+								}
+							}
+							if (dif == 1) {
+								temp_xy[1][0] = ii;
+								temp_xy[1][1] = jj;
+								temp_xy[0][0] = ii + 1;
+								temp_xy[0][1] = jj;
+							}
 							return temp_xy;
 						} else if (i == row - 1 && j == col - 1) {
 							temp = s[ii][jj].getKind();
@@ -204,7 +265,6 @@ public class CreatArray {
 				}
 			}
 		}
-		System.out.println("ÊÇ·ñÎª¿Õ£º" + v.size());
 		return v;
 	}
 

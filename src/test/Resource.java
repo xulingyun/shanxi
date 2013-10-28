@@ -6,10 +6,10 @@ import javax.microedition.lcdui.Image;
 
 public class Resource {
 
-	public final static int[] MonsterBlood = { 100, 20, 150, 25, 100, 20, 300,
+	public final static int[] MonsterBlood = { 40, 20, 40, 25, 100, 20, 300,
 			25, 150, 18, 300, 20, 200, 25, 400, 30, 150, 20, 150, 25, 150, 20,
-			150, 30, 150, 30, 1500, 0, 2000, 0, 2500, 0, 3000, 0, 3500, 0,
-			4000, 0, 4500, 0, 5000, 0, 400, 25 };
+			150, 30, 150, 30, 500, 0, 1500, 0, 2500, 0, 3000, 0, 3500, 0, 4000,
+			0, 4500, 0, 5000, 0, 400, 25 };
 
 	public final static int[] stoneXY = { 10, -100, 0, 90, -200, 0, 180, -340,
 			0, 120, -360, 0, 40, -400, 0 };
@@ -18,7 +18,7 @@ public class Resource {
 			-350, 0 };
 
 	public final static int[] stoneXY2 = { 20, 60, 0, 150, 80, 0, 70, 150, 0 };
-	public final static int[] MonsterAttack = { 15, 1, 10, 1, 25, 1, 20, 1, 35,
+	public final static int[] MonsterAttack = { 8, 1, 8, 1, 25, 1, 20, 1, 35,
 			1, 30, 1, 50, 1, 45, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150, 0, 150,
 			0, 350, 0, 400, 0, 450, 0, 0, 0, 600, 0, 700, 0, 400, 0 };
 	public final static int[] MonsterSpeed = { 10, 10, 10, 10, 10, 10, 10, 10,
@@ -32,11 +32,11 @@ public class Resource {
 	public static byte[] heroAndSoldierLevel = { 1, 1, 1, 1, 0, 0, 0, 0, 0 };
 	public static byte[] isBelongMyOfHero = { 1, 0, 0, 0, 0, 0 };
 
-	public final static long[] heroMoney = { 1000, 10000, 25000, 50000, 60000,
-			90000 };
+	public final static long[] heroMoney = { 1000, 5000, 10000, 25000, 20000,
+			30000 };
 
-	public final static long[] soldierMoney = { 0, 0, 0, 0, 30000, 20000,
-			40000, 50000, 50000 };
+	public final static long[] soldierMoney = { 0, 0, 0, 0, 3000, 2000, 4000,
+			10000, 10000 };
 
 	public static byte[] guanqiaLevel = { 0, -1, -1, -1, -1, -1, -1, -1, -1,
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -50,20 +50,21 @@ public class Resource {
 			{ 700, 7, 4000, 130, 1, 8000, 200, 30 },
 			{ 800, 8, 5000, 140, 1, 5000, 200, 15 },
 			{ 800, 9, 6000, 150, 1, 5000, 150, 20, 250, 25 } };
-	public final static int[][] soldierValue = { { 50, 1000, 5, 1000, 0, 0 },
-			{ 55, 3500, 5, 3500 }, { 45, 3000, 3, 3000, 5, 1 },
-			{ 45, 2000, 5, 2000, 0, 0 }, { 55, 2500, 3, 2500 },
-			{ 50, 4000, 5, 4000, 6, 1 }, { 55, 5000, 3, 5000 },
-			{ 65, 5000, 5, 5000 }, { 70, 5000, 3, 5000, 20, 1 } };
+
+	public final static int[][] soldierValue = { { 55, 1000, 10, 1000, 0, 0 },
+			{ 55, 3500, 10, 3500 }, { 55, 3000, 8, 3000, 5, 1 },
+			{ 55, 2000, 10, 2000, 0, 0 }, { 60, 2500, 8, 2500 },
+			{ 55, 4000, 10, 4000, 6, 1 }, { 60, 5000, 8, 5000 },
+			{ 70, 5000, 10, 5000 }, { 75, 5000, 8, 5000, 20, 1 } };
 	public static int[] goodsPrice = { 1000, 1000, 1000 };
-	public static byte[] goodsNums = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	//public static byte[] goodsNums = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	public final static int[] prop2Localtion = { 150, -150, 0, 0, 250, -150, 0,
 			0, 350, -50, 0, 0, 300, 100, 0, 0, 200, 100, 0, 0, 200, 50, 0, 0,
 			250, -100, 0, 0 };
 	public final static long[] guanqiaMoneyAndJingyan = { 400, 50, 300, 40 };
 	public final static long[] TongMoneyAndJingyan = { 500, 100, 500, 40 };
 
-	public final static String[] shopInfo = { "血瓶", "恢复英雄40%的血量。（战斗中使用）",
+	public final static String[] shopInfo = { "治疗药剂", "恢复英雄40%的血量。（战斗中使用）",
 			"火球术", "使敌人损失30%的血量。（战斗中使用）", "狂暴术", "士兵的攻击力翻倍。（30秒）", "双倍经验卡",
 			"战斗胜利获得的经验翻倍。", "双倍金币卡", "战斗胜利获得的金币翻倍。", "能量石", "使用后增加20点能量。",
 			"保护符文", "通天塔战斗失败避免损失。", "军团之力", "增加所有士兵10%攻击力。", "刚性护符",
@@ -89,7 +90,7 @@ public class Resource {
 			"光明祭祀", "狂战士", "狂暴者", "神灵武士", "魔法师", "大魔法师", "魔导师", "刺客", "暗杀者",
 			"禁军统领", "火枪手", "鹰眼", "狙击手" };
 
-	public static String[] AttainmentName = { "牛刀小试", "出入草原", "草原征服者", "地底冒险",
+	public static String[] AttainmentName = { "牛刀小试", "初入草原", "草原征服者", "地底冒险",
 			"地心游记", "冰天雪地", "风雪之王", "炽热战场", "地狱之主", "探险者", "再接再厉", "优胜者",
 			"所向披靡", "初出茅庐", "小有所成", "势不可挡", "战争之王", "杀戮盛宴", "清道夫", "一骑当千",
 			"虚空之王", "魔法之王", "灵魂医者", "步战勇士", "构装骑士", "丛林主宰", "风暴之锤", "生命之光",
@@ -296,7 +297,25 @@ public class Resource {
 	public static final short IMG_ID_PROMPT_QUEREN_ON = NUMS++;// 179
 	public static final short IMG_ID_PROMPT_QUEREN = NUMS++;// 180
 	public static final short wave = NUMS++;// 181
-	public static final short dongxi = NUMS++;// 181
+	public static final short dongxi = NUMS++;// 182
+	public static final short gobar = NUMS++;// 183
+	public static final short gobarpoint = NUMS++;// 184
+	public static final short tishi1 = NUMS++;// 185
+	public static final short tishi2 = NUMS++;// 186
+	public static final short selectway = NUMS++;// 187
+	public static final short selectbox11 = NUMS++;// 186
+	public static final short selectbox21 = NUMS++;// 187
+	public static final short roles = NUMS++;// 188
+
+	public static final short Y_btn_1 = NUMS++;// 188
+	public static final short Y_btn_5 = NUMS++;// 188
+	public static final short Y_btn_10 = NUMS++;// 188
+	public static final short Y_btn_20 = NUMS++;// 188
+	public static final short Y_btn_cancel = NUMS++;// 188
+	public static final short Y_btn_close = NUMS++;// 188
+	public static final short Y_btn_cz = NUMS++;// 188
+	public static final short Y_btn_ok = NUMS++;// 188
+	public static final short Y_btn_tvd = NUMS++;// 188
 
 	public static final byte isfirst = 0;
 
@@ -397,7 +416,17 @@ public class Resource {
 			"/recharge/czbg.png", "/recharge/czbg_.png",
 			"/prompt/popup_bg.png", "/prompt/queren_on.png",
 			"/prompt/queren.png", "/secondpage/wave.png",
-			"/secondpage/dongxi.png"
+			"/secondpage/dongxi.png", "/firstpage/gobar.png",
+			"/firstpage/gobarpoint.png", "/firstpage/tishi1.png",
+			"/firstpage/tishi2.png", "/firstpage/selectway.png",
+			"/common/selectbox11.png", "/common/selectbox21.png",
+			"/firstpage/role.png",
+
+			"/addshanxi/Y_btn_1.png", "/addshanxi/Y_btn_5.png",
+			"/addshanxi/Y_btn_10.png", "/addshanxi/Y_btn_20.png",
+			"/addshanxi/Y_btn_cancel.png", "/addshanxi/Y_btn_close.png",
+			"/addshanxi/Y_btn_cz.png", "/addshanxi/Y_btn_ok.png",
+			"/addshanxi/Y_btn_tvd.png"
 
 	};
 
@@ -439,6 +468,7 @@ public class Resource {
 		loadImage(guanqiatext);
 		loadImage(help1);
 		loadImage(arrows);
+		loadImage(lock);
 	}
 
 	public static void UnloadMain() {
@@ -454,6 +484,7 @@ public class Resource {
 		releaseImage(guanqiatext);
 		releaseImage(help1);
 		releaseImage(arrows);
+		releaseImage(lock);
 	}
 
 	public static void loadMainInfo() {
@@ -491,6 +522,8 @@ public class Resource {
 		loadImage(biankuang);
 		loadImage(select2);
 		loadImage(number);
+		loadImage(selectway);
+		loadImage(roles);
 	}
 
 	public static void UnloadHero() {
@@ -514,6 +547,8 @@ public class Resource {
 		releaseImage(biankuang);
 		releaseImage(select2);
 		releaseImage(number);
+		releaseImage(selectway);
+		releaseImage(roles);
 	}
 
 	public static void loadSoldier() {
@@ -533,6 +568,7 @@ public class Resource {
 		loadImage(soldier8);
 		loadImage(select2);
 		loadImage(selectbox2);
+		loadImage(selectbox21);
 		loadImage(button1);
 		loadImage(buyandshengji);
 		loadImage(buttontext1);
@@ -547,6 +583,8 @@ public class Resource {
 		loadImage(bg11);
 		loadImage(biankuang);
 		loadImage(number);
+		loadImage(gobar);
+		loadImage(gobarpoint);
 	}
 
 	public static void UnloadSoldier() {
@@ -566,6 +604,7 @@ public class Resource {
 		releaseImage(soldier8);
 		releaseImage(select2);
 		releaseImage(selectbox2);
+		releaseImage(selectbox21);
 		releaseImage(button1);
 		releaseImage(buyandshengji);
 		releaseImage(buttontext1);
@@ -580,6 +619,8 @@ public class Resource {
 		releaseImage(bg11);
 		releaseImage(biankuang);
 		releaseImage(number);
+		releaseImage(gobar);
+		releaseImage(gobarpoint);
 	}
 
 	public static void loadShop() {
@@ -842,6 +883,9 @@ public class Resource {
 		} else if ((index - 1) % 4 == 3) {
 			loadImage(bg3);
 		}
+		loadImage(herosay1);
+		loadImage(herosay2);
+		loadImage(wave);
 	}
 
 	public static void UnloadBg(int index) {
@@ -854,7 +898,11 @@ public class Resource {
 		} else if (index == 3) {
 			releaseImage(bg3);
 		}
+		releaseImage(herosay1);
+		releaseImage(herosay2);
+		releaseImage(wave);
 	}
+
 	public static void loadGameHero(int index) {
 		loadImage(hero);
 		if (index == 0) {
@@ -961,6 +1009,10 @@ public class Resource {
 		loadImage(attacknumber);
 		loadImage(selectbox1);
 		loadImage(selectbox2);
+		loadImage(selectbox11);
+		loadImage(selectbox21);
+		loadImage(tishi1);
+		loadImage(tishi2);
 	}
 
 	public static void UnloadGameSoldier(byte[] selectS) {
@@ -1003,6 +1055,10 @@ public class Resource {
 		releaseImage(attacknumber);
 		releaseImage(selectbox1);
 		releaseImage(selectbox2);
+		releaseImage(selectbox11);
+		releaseImage(selectbox21);
+		releaseImage(tishi1);
+		releaseImage(tishi2);
 	}
 
 	public static void loadMonster(int[] v) {
@@ -1178,6 +1234,7 @@ public class Resource {
 		loadImage(queding);
 		loadImage(fight);
 		loadImage(xingyunchoujiang);
+		loadImage(buttontext2);
 	}
 
 	public static void UnloadWinAndFail() {
@@ -1188,7 +1245,8 @@ public class Resource {
 		releaseImage(button2);
 		releaseImage(queding);
 		releaseImage(fight);
-		loadImage(xingyunchoujiang);
+		releaseImage(xingyunchoujiang);
+		releaseImage(buttontext2);
 	}
 
 	public static void loadStop() {

@@ -2,34 +2,34 @@ package test;
 
 /**
  * 道具
+ * 
  * @author Administrator
- *
+ * 
  */
 public class PlayerProp {
-	
-	/*ID*/
+
+	/* ID */
 	private int id;
-	
-	/*道具名称*/
+
+	/* 道具名称 */
 	private String name;
-	
-	/*道具ID*/
+
+	/* 道具ID */
 	private int propId;
-	
-	/*扣费点*/
+
+	/* 扣费点 */
 	private int feeCode;
-	
-	/*道具数量*/
+
+	/* 道具数量 */
 	private int nums;
-	
-	/*描述*/
+
+	/* 描述 */
 	private String desc;
-	
-	/*道具价格*/
+
+	/* 道具价格 */
 	private int price;
-	
+
 	private String propCode;
-	
 
 	public String getPropCode() {
 		return propCode;
@@ -54,7 +54,7 @@ public class PlayerProp {
 	public void setPrice(int price) {
 		this.price = price;
 	}
-	
+
 	public int getPropId() {
 		return propId;
 	}
@@ -85,6 +85,14 @@ public class PlayerProp {
 
 	public void setNums(int nums) {
 		this.nums = nums;
+	}
+
+	public void addNums() {
+		++this.nums;
+	}
+	
+	public void reduceNums() {
+		--this.nums;
 	}
 
 	public String getDesc() {

@@ -63,6 +63,10 @@ public class GameEngine extends GameCanvasEngine {
 	Soldier[] newSoldier = new Soldier[6];
 	int[] monsterKind = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0 };
+	String rankScore = "";
+	String rankNo = "";
+	String rankBigScore = "";
+	long entergameTime;
 
 	public static int randomSoldierSayLocaltion;
 	public static int randomSoldierSayIndex;
@@ -144,7 +148,7 @@ public class GameEngine extends GameCanvasEngine {
 	public static boolean online;
 	public static int balance;
 	public static boolean isAllStop;
-	public static String moneyUnit = "元宝";
+	public static String moneyUnit = "tv豆";
 	public static int enterBuy = 1;
 	public boolean isAttainment1;
 	public boolean isAttainment2;
@@ -171,8 +175,6 @@ public class GameEngine extends GameCanvasEngine {
 	public static boolean isEnhanceBoold;
 	public static boolean isDoubleExp;
 	public static boolean isDoubleMoney;
-	public Prompt prompt = new Prompt();
-	public Recharge recharge = new Recharge();
 
 	Vector soonDeathArray = new Vector();
 	Vector deathArray = new Vector();
@@ -258,6 +260,9 @@ public class GameEngine extends GameCanvasEngine {
 				return;
 			}
 		}
+		tishiSkillIndex = 0;
+		tishi = System.currentTimeMillis();
+		tishiCount = 0;
 		Map.toaString();
 		mapArray = Map.getMap();
 		mapIndexOfIndex = 0;
@@ -285,6 +290,13 @@ public class GameEngine extends GameCanvasEngine {
 		soldierATkTimes = 1;
 		tempStar = 0;
 		add = -1;
+		tishiMove = 0;
+		moveTishiIndex = 0;
+		moveTishitime = 0;
+		ismoveTishi = true;
+		moveTishiChange = false;
+		tishiWay = 0;
+		movetishiCount = 0;
 
 		Resource.UnloadSoonStartSoldier();
 		Resource.UnloadSoonStart();
@@ -325,6 +337,7 @@ public class GameEngine extends GameCanvasEngine {
 	protected GameEngine(MIDlet midlet) {
 		super(midlet);
 		setRelease(true);
+		entergameTime = System.currentTimeMillis();
 		isAttainment1 = false;
 		isAttainment2 = false;
 		gameButtonSelect = 0;
@@ -354,21 +367,26 @@ public class GameEngine extends GameCanvasEngine {
 	}
 
 	int wcs = 0;
+	int upRecordIndex = 0;
 
 	private void handleMainKey3(KeyState key) {
 		if (key.containsAndRemove(KeyCode.OK)) {
-			if (mainPage3Index == 0) {
+			if (mainPage3Index == -1) {
+				mainPage3Index = 0;
+			} else {
 				enterBuy = 5;
-				if (my.getMoney() >= needMoney) {
-					PopupText pt = UIResource.getInstance()
-							.buildDefaultPopupText();
-					if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 0) {
-						pt.setText("购买成功！");
-						my.setMoney(my.getMoney() - needMoney);
-						Resource.isBelongMyOfHero[mainPageIndex[3]]++;
-					} else {
-						if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 20) {
-							pt.setText("亲，你的英雄等级已满，不能在升级了！");
+				if (mainPage3Index == 0) {
+					mainPage3Index = -1;
+				} else if (mainPage3Index == 1) {
+					if (my.getMoney() >= needMoney) {
+						PopupText pt = UIResource.getInstance()
+								.buildDefaultPopupText();
+						if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 0) {
+							pt.setText("购买成功！");
+							my.setMoney(my.getMoney() - needMoney);
+							Resource.isBelongMyOfHero[mainPageIndex[3]]++;
+						} else if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 20) {
+							pt.setText("亲，你的英雄等级已满，不能再升级了！");
 						} else {
 							pt.setText("升级成功！");
 							my.setMoney(my.getMoney() - needMoney);
@@ -386,30 +404,22 @@ public class GameEngine extends GameCanvasEngine {
 								}
 							}
 						}
+						alertTimeFn(pt);
+					} else {
+						StateExpense se = new StateExpense(this, 146);
+						se.processPrompt();
 					}
-					alertTimeFn(pt);
-				} else {
-					PopupConfirm pc = UIResource.getInstance()
-							.buildDefaultPopupConfirm();
-					pc.setText("金币不足，是否花费" + pm.props[10].getPrice()
-							+ moneyUnit + "购买10000金币？");
-					alertTime = System.currentTimeMillis();
-					isAllStop = true;
-					if (pc.popup() == 0) {
-						boolean flag = pm.buyProp(146, 1);
-						if (flag) {
-							my.setMoney(my.getMoney() + 10000);
-						}
-					}
-				}
-			} else if (mainPage3Index == 1) {
-				if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 0) {
+				} else if (mainPage3Index == 2) {
 					PopupText pt = UIResource.getInstance()
 							.buildDefaultPopupText();
-					pt.setText("你尚未拥有该英雄！");
-					alertTimeFn(pt);
-				} else {
-					Resource.saveSelectHero = (byte) mainPageIndex[3];
+					if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 0) {
+						pt.setText("你尚未拥有该英雄！");
+						alertTimeFn(pt);
+					} else {
+						pt.setText("出征成功！");
+						alertTimeFn(pt);
+						Resource.saveSelectHero = (byte) mainPageIndex[3];
+					}
 				}
 			}
 		} else if (key.containsAndRemove(KeyCode.LEFT)) {
@@ -418,6 +428,10 @@ public class GameEngine extends GameCanvasEngine {
 					mainPageIndex[3]--;
 				else
 					mainPageIndex[3] = 5;
+			} else {
+				if (mainPage3Index == 0 || mainPage3Index == 2)
+					mainPage3Index = 1;
+
 			}
 		} else if (key.containsAndRemove(KeyCode.RIGHT)) {
 			if (mainPage3Index == -1) {
@@ -425,30 +439,39 @@ public class GameEngine extends GameCanvasEngine {
 					mainPageIndex[3]++;
 				else
 					mainPageIndex[3] = 0;
+			} else {
+				if (mainPage3Index == 1 || mainPage3Index == 2)
+					mainPage3Index = 0;
 			}
 		} else if (key.containsAndRemove(KeyCode.UP)) {
-			if (mainPage3Index == 1) {
-				mainPage3Index = 0;
-			} else
-				mainPage3Index = -1;
+			if (mainPage3Index == 1 || mainPage3Index == 0) {
+				upRecordIndex = mainPage3Index;
+				mainPage3Index = 2;
+			}
 		} else if (key.containsAndRemove(KeyCode.DOWN)) {
-			if (mainPage3Index == -1) {
-				mainPage3Index = 0;
-			} else if (mainPage3Index == 0) {
-				mainPage3Index = 1;
-			}
+			if (mainPage3Index == 2)
+				mainPage3Index = upRecordIndex;
 		} else if (key.containsAndRemove(KeyCode.NUM0)) {
-			if (enterWay == 0) {
-				mainIndex = 0;
-				Resource.UnloadHero();
-				Resource.loadMain();
+			if (mainPage3Index == -1) {
+				if (enterWay == 0) {
+					mainIndex = 0;
+					Resource.UnloadHero();
+					Resource.loadMain();
+				} else if (enterWay == 1) {
+					mainIndex = 2;
+					Resource.UnloadHero();
+					Resource.loadSoonStart();
+					Resource.loadSoonStartSoldier(Resource.savaSelcetSoldier);
+				} else if (enterWay == 2) {
+					mainIndex = 1;
+					Resource.UnloadHero();
+					Resource.loadTongtianta();
+					Resource.loadMainInfo();
+				}
+				sag.saveRecord();
 			} else {
-				mainIndex = 2;
-				Resource.UnloadHero();
-				Resource.loadSoonStart();
-				Resource.loadSoonStartSoldier(Resource.savaSelcetSoldier);
+				mainPage3Index = -1;
 			}
-			sag.saveData();
 		}
 	}
 
@@ -512,18 +535,8 @@ public class GameEngine extends GameCanvasEngine {
 							alertTimeFn(pt);
 						}
 					} else {
-						PopupConfirm pc = UIResource.getInstance()
-								.buildDefaultPopupConfirm();
-						pc.setText("金币不足，是否花费" + pm.props[10].getPrice()
-								+ moneyUnit + "购买10000金币？");
-						alertTime = System.currentTimeMillis();
-						isAllStop = true;
-						if (pc.popup() == 0) {
-							boolean flag = pm.buyProp(146, 1);
-							if (flag) {
-								my.setMoney(my.getMoney() + 10000);
-							}
-						}
+						StateExpense se = new StateExpense(this, 146);
+						se.processPrompt();
 					}
 				} else {// 购买
 					if (my.getMoney() >= Resource.soldierMoney[selectSoldierindex]) {
@@ -535,18 +548,8 @@ public class GameEngine extends GameCanvasEngine {
 						Resource.heroAndSoldierLevel[selectSoldierindex]++;
 						alertTimeFn(pt);
 					} else {
-						PopupConfirm pc = UIResource.getInstance()
-								.buildDefaultPopupConfirm();
-						pc.setText("金币不足，是否花费" + pm.props[10].getPrice()
-								+ moneyUnit + "购买10000金币？");
-						alertTime = System.currentTimeMillis();
-						isAllStop = true;
-						if (pc.popup() == 0) {
-							boolean flag = pm.buyProp(146, 1);
-							if (flag) {
-								my.setMoney(my.getMoney() + 10000);
-							}
-						}
+						StateExpense se = new StateExpense(this, 146);
+						se.processPrompt();
 					}
 				}
 			}
@@ -597,16 +600,21 @@ public class GameEngine extends GameCanvasEngine {
 						mainIndex = 0;
 						Resource.UnloadSoldier();
 						Resource.loadMain();
-					} else {
+					} else if (enterWay == 1) {
 						mainIndex = 2;
 						Resource.UnloadSoldier();
 						Resource.loadSoonStart();
 						Resource.loadSoonStartSoldier(Resource.savaSelcetSoldier);
+					} else if (enterWay == 2) {
+						mainIndex = 1;
+						Resource.UnloadSoldier();
+						Resource.loadTongtianta();
+						Resource.loadMainInfo();
 					}
 					mainPageIndex[4] = 0;
 					selectSoldierLocation = 0;
 					selectSoldierindex = 0;
-					sag.saveData();
+					sag.saveRecord();
 				}
 			}
 		}
@@ -634,14 +642,14 @@ public class GameEngine extends GameCanvasEngine {
 						} else {
 							PopupText pt = UIResource.getInstance()
 									.buildDefaultPopupText();
-							pt.setText("你的能量不足，不能开始扫荡！");
+							pt.setText("你的能量不足，不能开始挂机！");
 							alertTimeFn(pt);
 							return;
 						}
 					} else {
 						PopupText pt = UIResource.getInstance()
 								.buildDefaultPopupText();
-						pt.setText("该关卡未获得3星评价，不能进行扫荡！");
+						pt.setText("该关卡未获得3星评价，不能进行挂机！");
 						alertTimeFn(pt);
 					}
 				} else if (mainPageIndex[2] == 2) {
@@ -662,7 +670,7 @@ public class GameEngine extends GameCanvasEngine {
 				if (saodangIndex == 0) {
 					PopupConfirm pc = UIResource.getInstance()
 							.buildDefaultPopupConfirm();
-					pc.setText("是否停止扫荡？");
+					pc.setText("是否停止挂机？");
 					alertTime = System.currentTimeMillis();
 					if (pc.popup() == 0) {
 						isSaodang = false;
@@ -672,18 +680,13 @@ public class GameEngine extends GameCanvasEngine {
 					}
 					alertSumTime = System.currentTimeMillis() - alertTime;
 				} else if (saodangIndex == 1) {
-					PopupConfirm pc = UIResource.getInstance()
-							.buildDefaultPopupConfirm();
-					pc.setText("是否使用" + pm.props[12].getPrice() + moneyUnit
-							+ "进行加速扫荡？");
 					alertTime = System.currentTimeMillis();
-					if (pc.popup() == 0) {
+					StateExpense se = new StateExpense(this, 136 + 12);
+					se.processPrompt();
+					if (pm.isBuySuccess) {
 						enterBuy = 3;
-						boolean flag = pm.buyProp(148, 1);
-						if (flag) {
-							pm.reducePropNum(pm.props[12].getPropId());
-							saodangTime = 300;
-						}
+						pm.reducePropNum(pm.props[12].getPropId());
+						saodangTime = 300;
 					}
 					alertSumTime = System.currentTimeMillis() - alertTime;
 				} else if (saodangIndex == 2) {
@@ -693,7 +696,7 @@ public class GameEngine extends GameCanvasEngine {
 					saodangIndex = 1;
 					isSaodang = false;
 					saodangTime = 0;
-					sag.saveData();
+					sag.saveRecord();
 					Resource.UnloadSaodang();
 					Resource.loadMainInfo();
 					Resource.loadGameSoldier(Resource.savaSelcetSoldier);
@@ -832,20 +835,15 @@ public class GameEngine extends GameCanvasEngine {
 						tongtiantaAndNormalSmallGuanqia = Resource.tongtiantafloor % 10;
 					}
 				} else {
-					PopupConfirm pc = UIResource.getInstance()
-							.buildDefaultPopupConfirm();
-					pc.setText("是否花费" + pm.props[14].getPrice() + moneyUnit
-							+ "购买无尽之钥道具一次进入通天塔的机会？");
 					alertTime = System.currentTimeMillis();
-					isAllStop = true;
-					if (pc.popup() == 0) {
-						boolean flag = pm.buyProp(150, 1);
+					StateExpense se = new StateExpense(this, 136 + 14);
+					se.processPrompt();
+					if (pm.isBuySuccess) {
 						enterBuy = 2;
-						if (flag) {
-							pm.reducePropNum(pm.props[14].getPropId());
-							my.setCountTongtianta(1);
-						}
+						pm.reducePropNum(pm.props[14].getPropId());
+						my.setCountTongtianta(1);
 					}
+					alertSumTime = System.currentTimeMillis() - alertTime;
 				}
 			}
 		} else if (key.containsAndRemove(KeyCode.LEFT)) {
@@ -918,6 +916,12 @@ public class GameEngine extends GameCanvasEngine {
 					pt.setText("你已经不是新手了，请去其他关卡冒险吧！");
 					alertTimeFn(pt);
 					return;
+				} else if (Resource.guanqiaLevel[10 * (mainPageIndex[0] - 1)] < 0) {
+					PopupText pt = UIResource.getInstance()
+							.buildDefaultPopupText();
+					pt.setText("完成前面的关卡才能解锁！");
+					alertTimeFn(pt);
+					return;
 				}
 				isSaodang = false;
 				saodangIndex = 1;
@@ -941,10 +945,10 @@ public class GameEngine extends GameCanvasEngine {
 				Resource.UnloadMain();
 				Resource.loadAward();
 			} else if (mainPageIndex[0] == 6) {
-				if (Resource.guanqiaLevel[9] < 0) {
+				if (Resource.guanqiaLevel[5] < 0) {
 					PopupText pt = UIResource.getInstance()
 							.buildDefaultPopupText();
-					pt.setText("通关索米亚草原才能解锁！");
+					pt.setText("杀死索米亚草原的第一个boss解锁！");
 					isTongtianta = false;
 					alertTimeFn(pt);
 				} else {
@@ -983,7 +987,7 @@ public class GameEngine extends GameCanvasEngine {
 				alertTime = System.currentTimeMillis();
 				if (pc.popup() == 0) {
 					online = false;
-					sag.saveData();
+					sag.saveRecord();
 					exit = true;
 				} else {
 					alertSumTime = System.currentTimeMillis() - alertTime;
@@ -1150,9 +1154,9 @@ public class GameEngine extends GameCanvasEngine {
 				newBullet = new Bullet(newMonster.getY() * 60 + 385,
 						newMonster.getX() * 60 + 11,
 						Resource.loadImage(Resource.bullet1), newMonster);
-				Resource.goodsNums[0] = 1;
-				Resource.goodsNums[1] = 1;
-				Resource.goodsNums[2] = 1;
+				pm.props[0].setNums(1);
+				pm.props[1].setNums(1);
+				pm.props[2].setNums(1);
 			} else if (newGuideIndex >= 8 && newGuideIndex <= 10) {
 				newGuideIndex++;
 			} else if (newGuideIndex >= 13 && newGuideIndex < 40) {
@@ -1474,7 +1478,7 @@ public class GameEngine extends GameCanvasEngine {
 					g.drawRegion(Resource.images[Resource.newtext], 0, 0 * 25,
 							91, 25, 0, newGuide_x + 185, newGuide_y + 70, 20);
 					TextView.showMultiLineText(g,
-							"怪物太厉害了，快使用狂暴术提升士兵的攻击力。按数字键2使用火球术。",
+							"怪物太厉害了，快使用火球术攻击它们。按数字键2使用火球术。",
 							TextView.STYLE_NORMAL, newGuide_x + 80,
 							newGuide_y + 110, 280, 100);
 					TextView.showSingleLineText(g, "点击数字键'2'",
@@ -1934,6 +1938,30 @@ public class GameEngine extends GameCanvasEngine {
 			g.drawImage(Resource.images[69], 10, 415, 20);
 			g.drawRegion(Resource.images[42], 0, 108, 85, 18, 0, 18, 420, 20);
 
+			if (!SaveAndGet.isFirstGame) {
+				if (Resource.guanqiaLevel[5] < 0) {
+					g.drawImage(Resource.images[Resource.lock], 540, 90, 20);
+					g.drawImage(Resource.images[Resource.lock], 500, 190, 20);
+					g.drawImage(Resource.images[Resource.lock], 560, 360, 20);
+					g.drawImage(Resource.images[Resource.lock], 335, 350, 20);
+				} else if (Resource.guanqiaLevel[10] < 0) {
+					g.drawImage(Resource.images[Resource.lock], 500, 190, 20);
+					g.drawImage(Resource.images[Resource.lock], 560, 360, 20);
+					g.drawImage(Resource.images[Resource.lock], 335, 350, 20);
+				} else if (Resource.guanqiaLevel[20] < 0) {
+					g.drawImage(Resource.images[Resource.lock], 560, 360, 20);
+					g.drawImage(Resource.images[Resource.lock], 335, 350, 20);
+				} else if (Resource.guanqiaLevel[30] < 0) {
+					g.drawImage(Resource.images[Resource.lock], 335, 350, 20);
+				}
+			} else {
+				g.drawImage(Resource.images[Resource.lock], 540, 90, 20);
+				g.drawImage(Resource.images[Resource.lock], 270, 200, 20);
+				g.drawImage(Resource.images[Resource.lock], 500, 190, 20);
+				g.drawImage(Resource.images[Resource.lock], 560, 360, 20);
+				g.drawImage(Resource.images[Resource.lock], 335, 350, 20);
+			}
+
 			g.drawImage(Resource.images[77], 20, 460, 20);
 			if (mainPageIndex[0] == 0) {
 				arrowAnim(9, 20, 190, 0, 0, 0);
@@ -1972,11 +2000,10 @@ public class GameEngine extends GameCanvasEngine {
 				} else {
 					if ((mainIndex == 21 && enterBuy == 2)) {
 						drawEnterTongtianta();
-						recharge.draw(g);
+						// recharge.draw(g);
 					} else if ((mainIndex == 22 && enterBuy == 2)) {
 						drawEnterTongtianta();
-						recharge.draw(g);
-						prompt.draw(g);
+						// recharge.draw(g);
 					} else {
 						drawEnterTongtianta();
 					}
@@ -1988,11 +2015,10 @@ public class GameEngine extends GameCanvasEngine {
 					|| (mainIndex == 22 && enterBuy == 5)) {
 				if ((mainIndex == 21 && enterBuy == 5)) {
 					drawHeroOfPanel(leftpointx, toppointy);
-					recharge.draw(g);
+					// recharge.draw(g);
 				} else if ((mainIndex == 22 && enterBuy == 5)) {
 					drawHeroOfPanel(leftpointx, toppointy);
-					recharge.draw(g);
-					prompt.draw(g);
+					// recharge.draw(g);
 				} else {
 					drawHeroOfPanel(leftpointx, toppointy);
 				}
@@ -2000,11 +2026,10 @@ public class GameEngine extends GameCanvasEngine {
 					|| (mainIndex == 22 && enterBuy == 6)) {
 				if ((mainIndex == 21 && enterBuy == 6)) {
 					drawSoldierOfPanel(leftpointx, toppointy);
-					recharge.draw(g);
+					// recharge.draw(g);
 				} else if ((mainIndex == 22 && enterBuy == 6)) {
 					drawSoldierOfPanel(leftpointx, toppointy);
-					recharge.draw(g);
-					prompt.draw(g);
+					// recharge.draw(g);
 				} else {
 					drawSoldierOfPanel(leftpointx, toppointy);
 				}
@@ -2012,11 +2037,10 @@ public class GameEngine extends GameCanvasEngine {
 					|| (mainIndex == 22 && enterBuy == 4)) {
 				if (mainIndex == 21 && enterBuy == 4) {
 					drawAward();
-					recharge.draw(g);
+					// recharge.draw(g);
 				} else if (mainIndex == 22 && enterBuy == 4) {
 					drawAward();
-					recharge.draw(g);
-					prompt.draw(g);
+					// recharge.draw(g);
 				} else {
 					drawAward();
 				}
@@ -2024,11 +2048,10 @@ public class GameEngine extends GameCanvasEngine {
 					|| (mainIndex == 22 && enterBuy == 1)) {
 				if (mainIndex == 21 && enterBuy == 1) {
 					drawShop();
-					recharge.draw(g);
+					// recharge.draw(g);
 				} else if (mainIndex == 22 && enterBuy == 1) {
 					drawShop();
-					recharge.draw(g);
-					prompt.draw(g);
+					// recharge.draw(g);
 				} else
 					drawShop();
 			} else if (mainIndex == 8) {
@@ -2061,9 +2084,9 @@ public class GameEngine extends GameCanvasEngine {
 		g.drawRegion(Resource.images[Resource.guanqiatext], 0,
 				18 * (mainPageIndex[0] - 1), 85, 18, 0, panle_x + 88,
 				panle_y - 5, 20);
-		TextView.showMultiLineText(g, "你的最高层为" + Resource.tongtiantafloor
-				+ "层，", TextView.STYLE_ALIGN_CENTER, panle_x + 10,
-				panle_y + 30, 260, 60);
+		TextView.showMultiLineText(g, "最高层记录：" + rankBigScore + "层，",
+				TextView.STYLE_ALIGN_CENTER, panle_x + 10, panle_y + 30, 260,
+				60);
 		TextView.showMultiLineText(
 				g,
 				"每天有一次免费挑战的机会，挑战会获得金币和经验的奖励，挑战的层数越高奖励越多，挑战失败将会获得之前一半的奖励。重新挑战，从第一层开始战斗。继续游戏，从你以前的最高层开始！",
@@ -2169,7 +2192,7 @@ public class GameEngine extends GameCanvasEngine {
 					0, dex + 125, dey + 10, 20);
 			int dangqianmiao = (int) ((System.currentTimeMillis() - saodangTime) / 1000);
 			if (dangqianmiao <= 180 && saodangTime != 180) {
-				TextView.showSingleLineText(g, "正在扫荡中……", dex + 20, dey + 45,
+				TextView.showSingleLineText(g, "正在挂机中……", dex + 20, dey + 45,
 						270, 30, TextView.STYLE_ALIGN_CENTER);
 				int fen = (180 - dangqianmiao) / 60;
 				int miao = (180 - dangqianmiao) % 60;
@@ -2193,10 +2216,9 @@ public class GameEngine extends GameCanvasEngine {
 				DrawUtil.drawRect(g, dex + 100 + 70 * saodangIndex, dey + 120,
 						47, 29, 2, 0xff0000);
 				if (mainIndex == 21 && enterBuy == 3) {
-					recharge.draw(g);
+					// recharge.draw(g);
 				} else if (mainIndex == 22 && enterBuy == 3) {
-					recharge.draw(g);
-					prompt.draw(g);
+					// recharge.draw(g);
 				}
 			} else {
 				if (isDoubleMoney) {
@@ -2218,7 +2240,7 @@ public class GameEngine extends GameCanvasEngine {
 									* 10 + tongtiantaAndNormalSmallGuanqia);
 				}
 				saodangIndex = 2;
-				TextView.showSingleLineText(g, "扫荡完成！", dex + 20, dey + 45,
+				TextView.showSingleLineText(g, "挂机完成！", dex + 20, dey + 45,
 						270, 30, TextView.STYLE_ALIGN_CENTER);
 				TextView.showSingleLineText(g, "获得" + winMoney + "金币和" + winExp
 						+ "经验！", dex + 20, dey + 60, 270, 30,
@@ -2233,6 +2255,7 @@ public class GameEngine extends GameCanvasEngine {
 	}
 
 	public void drawHeroOfPanel(int leftpointx, int toppointy) {
+		g.drawImage(Resource.images[Resource.bg11], 0, 0, 20);
 		g.drawImage(Resource.images[Resource.panel1], panle_x, panle_y, 20);
 		roleInformation();
 		g.drawImage(Resource.images[Resource.bgleft], leftpointx, toppointy, 20);
@@ -2250,64 +2273,103 @@ public class GameEngine extends GameCanvasEngine {
 				toppointy - 54, 20);
 		for (int s = 0; s < 6; s++) {
 			g.drawImage(Resource.images[Resource.select2], leftpointx + 43 + 90
-					* s, toppointy + 40, 20);
+					* s, toppointy + 60, 20);
 			g.drawRegion(Resource.images[Resource.hero], s * 62, 0, 62, 62, 0,
-					leftpointx + 43 + 90 * s + 1, toppointy + 40 + 1, 20);
+					leftpointx + 43 + 90 * s + 1, toppointy + 60 + 1, 20);
 			if (Resource.saveSelectHero == s) {
 				g.drawImage(Resource.images[Resource.selecthero], leftpointx
-						+ 43 + 90 * s + 44, toppointy + 40 + 44, 20);
+						+ 43 + 90 * s + 44, toppointy + 60 + 44, 20);
 			}
 		}
 		g.drawRegion(Resource.images[Resource.herobig], mainPageIndex[3] * 142,
-				0, 142, 161, 0, leftpointx + 70, toppointy + 130, 20);
-		g.drawRegion(Resource.images[Resource.button1], 0, 0, 47, 29, 0,
-				leftpointx + 80, toppointy + 300, 20);
+				0, 142, 161, 0, leftpointx + 70, toppointy + 150, 20);
 		if (Resource.isBelongMyOfHero[mainPageIndex[3]] != 20) {
-			g.drawImage(Resource.images[Resource.buttonbg], leftpointx + 130,
-					toppointy + 300, 20);
-			g.drawImage(Resource.images[Resource.money], leftpointx + 240,
-					toppointy + 300 + 2, 20);
+			g.drawImage(Resource.images[Resource.buttonbg], leftpointx + 70,
+					toppointy + 315, 20);
+			g.drawImage(Resource.images[Resource.money], leftpointx + 180,
+					toppointy + 315 + 2, 20);
 		}
 		if (Resource.isBelongMyOfHero[mainPageIndex[3]] > 0) {
-			g.drawRegion(Resource.images[Resource.buyandshengji], 0, 20, 40,
-					20, 0, leftpointx + 80 + 2, toppointy + 300 + 5, 20);
 			if (Resource.isBelongMyOfHero[mainPageIndex[3]] != 20) {
 				needMoney = Upgrade.upgradeHeroMoney(
 						Resource.isBelongMyOfHero[mainPageIndex[3]],
 						mainPageIndex[3]);
+				g.drawRegion(Resource.images[Resource.buyandshengji], 0, 20,
+						40, 20, 0, leftpointx + 30, toppointy + 320, 20);
 				drawNum(Resource.images[Resource.number], g, needMoney,
-						leftpointx + 170 - 12, toppointy + 300 + 7, 10);
+						leftpointx + 110 - 10, toppointy + 315 + 7, 10);
 			}
 		} else {
-			g.drawRegion(Resource.images[Resource.buyandshengji], 0, 0, 40, 20,
-					0, leftpointx + 80 + 2, toppointy + 300 + 5, 20);
 			needMoney = Resource.heroMoney[mainPageIndex[3]];
+			g.drawRegion(Resource.images[Resource.buyandshengji], 0, 0, 40, 20,
+					0, leftpointx + 30, toppointy + 320, 20);
 			drawNum(Resource.images[Resource.number], g, needMoney,
-					leftpointx + 170 - 12, toppointy + 300 + 7, 10);
+					leftpointx + 110 - 10, toppointy + 315 + 7, 10);
 		}
-		g.drawRegion(Resource.images[Resource.button1], 0, 0, 47, 29, 0,
-				leftpointx + 80, toppointy + 330, 20);
-		g.drawRegion(Resource.images[Resource.buttontext1], 0, 20, 40, 20, 0,
-				leftpointx + 80 + 2, toppointy + 330 + 5, 20);
-		if (mainPageIndex[3] < 6 && mainPage3Index == -1) {
-			DrawUtil.drawRect(g, leftpointx + 43 + 90 * mainPageIndex[3],
-					toppointy + 40, 63, 63, 2, 0xff0000);
+		if (mainPage3Index == -1) {
+			if (arrowIndex % 4 < 2)
+				DrawUtil.drawRect(g, leftpointx + 43 + 90 * mainPageIndex[3],
+						toppointy + 60, 63, 63, 2, 0xff0000);
+			else
+				DrawUtil.drawRect(g, leftpointx + 45 + 90 * mainPageIndex[3],
+						toppointy + 62, 59, 59, 2, 0xff0000);
 		} else {
+			g.drawImage(Resource.images[Resource.selectway], leftpointx - 10
+					+ 90 * mainPageIndex[3], toppointy + 5, 20);
+			g.drawRegion(Resource.images[Resource.buttontext1], 0, 60, 40, 20,
+					0, leftpointx + 53 + 90 * mainPageIndex[3], toppointy + 25,
+					20);
+			if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 0) {
+				g.drawRegion(Resource.images[Resource.buyandshengji], 0, 0, 40,
+						20, 0, leftpointx + 90 * mainPageIndex[3],
+						toppointy + 102, 20);
+			} else {
+				g.drawRegion(Resource.images[Resource.buyandshengji], 0, 20,
+						40, 20, 0, leftpointx + 90 * mainPageIndex[3],
+						toppointy + 102, 20);
+			}
+			g.drawRegion(Resource.images[Resource.buyandshengji], 0, 40, 40,
+					20, 0, leftpointx + 105 + 90 * mainPageIndex[3],
+					toppointy + 102, 20);
 			if (mainPage3Index == 0) {
-				DrawUtil.drawRect(g, leftpointx + 80, toppointy + 300, 48, 30,
-						2, 0xff0000);
+				if (arrowIndex % 6 < 3) {
+					g.drawRegion(Resource.images[Resource.roles], 0, 0, 68, 68,
+							0, leftpointx + 90 + 90 * mainPageIndex[3],
+							toppointy + 77, 20);
+				} else {
+					g.drawRegion(Resource.images[Resource.roles], 68, 0, 68,
+							68, 0, leftpointx + 90 + 90 * mainPageIndex[3],
+							toppointy + 77, 20);
+				}
 			} else if (mainPage3Index == 1) {
-				DrawUtil.drawRect(g, leftpointx + 80, toppointy + 330, 48, 30,
-						2, 0xff0000);
+				if (arrowIndex % 6 < 3) {
+					g.drawRegion(Resource.images[Resource.roles], 0, 0, 68, 68,
+							0, leftpointx - 10 + 90 * mainPageIndex[3],
+							toppointy + 77, 20);
+				} else {
+					g.drawRegion(Resource.images[Resource.roles], 68, 0, 68,
+							68, 0, leftpointx - 10 + 90 * mainPageIndex[3],
+							toppointy + 77, 20);
+				}
+			} else if (mainPage3Index == 2) {
+				if (arrowIndex % 6 < 3) {
+					g.drawRegion(Resource.images[Resource.roles], 0, 0, 68, 68,
+							0, leftpointx + 40 + 90 * mainPageIndex[3],
+							toppointy + 2, 20);
+				} else {
+					g.drawRegion(Resource.images[Resource.roles], 68, 0, 68,
+							68, 0, leftpointx + 40 + 90 * mainPageIndex[3],
+							toppointy + 2, 20);
+				}
 			}
 		}
 		g.drawImage(Resource.images[Resource.panel1], leftpointx + 290,
-				toppointy + 110, 20);
+				toppointy + 140, 20);
 		g.drawImage(Resource.images[Resource.heroinfoall], leftpointx + 300,
-				toppointy + 120, 20);
+				toppointy + 150, 20);
 		setMyFont(20, false, 0);
 		int shuoming_x = leftpointx + 360;
-		int shuoming_y = toppointy + 126;
+		int shuoming_y = toppointy + 126 + 30;
 		if (Resource.isBelongMyOfHero[mainPageIndex[3]] == 0) {
 			TextView.showSingleLineText(g, Resource.heroName[mainPageIndex[3]],
 					shuoming_x, shuoming_y - 4);// 名字
@@ -2391,7 +2453,7 @@ public class GameEngine extends GameCanvasEngine {
 					leftpointx + 320, shuoming_y + 130, 240, 60);
 		}
 		g.drawImage(Resource.images[Resource.back0], panle_x + 300,
-				panle_y + 320, 20);
+				panle_y + 340, 20);
 	}
 
 	public void drawSoldierOfPanel(int leftpointx, int toppointy) {
@@ -2411,27 +2473,52 @@ public class GameEngine extends GameCanvasEngine {
 				leftpointx + 526, toppointy - 5, 20);
 		g.drawImage(Resource.images[Resource.titlebingzhong], leftpointx + 216,
 				toppointy - 54, 20);
+		g.drawImage(Resource.images[Resource.gobar], leftpointx + 20,
+				toppointy + 100, 20);
 		for (int s = 0; s < 4; s++) {
 			if (s == 3) {
 				if (selectSoldierindex + 3 - selectSoldierLocation == 3) {
-					g.drawRegion(Resource.images[Resource.udanddown], 0, 24,
-							54, 23, 0, leftpointx + 40, toppointy + 346, 20);
+					if (arrowIndex % 4 >= 2)
+						g.drawRegion(Resource.images[Resource.udanddown], 0,
+								24, 54, 23, 0, leftpointx + 40,
+								toppointy + 346, 20);
+					TextView.showSingleLineText(g, "向下更多士兵", leftpointx + 100,
+							toppointy + 346);
 				} else if (selectSoldierindex + 3 - selectSoldierLocation == 8) {
-					g.drawRegion(Resource.images[Resource.udanddown], 0, 0, 54,
-							23, 0, leftpointx + 40, toppointy + 33, 20);
+					if (arrowIndex % 4 >= 2)
+						g.drawRegion(Resource.images[Resource.udanddown], 0, 0,
+								54, 23, 0, leftpointx + 40, toppointy + 33, 20);
 				} else {
-					g.drawRegion(Resource.images[Resource.udanddown], 0, 0, 54,
-							23, 0, leftpointx + 40, toppointy + 33, 20);
-					g.drawRegion(Resource.images[Resource.udanddown], 0, 24,
-							54, 23, 0, leftpointx + 40, toppointy + 346, 20);
+					if (arrowIndex % 4 >= 2) {
+						g.drawRegion(Resource.images[Resource.udanddown], 0, 0,
+								54, 23, 0, leftpointx + 40, toppointy + 33, 20);
+						g.drawRegion(Resource.images[Resource.udanddown], 0,
+								24, 54, 23, 0, leftpointx + 40,
+								toppointy + 346, 20);
+					}
+					TextView.showSingleLineText(g, "向下更多士兵", leftpointx + 100,
+							toppointy + 346);
 				}
 			}
 			g.drawImage(Resource.images[Resource.select2], leftpointx + 40,
 					toppointy + 66 + 70 * s, 20);
-			if (s == selectSoldierLocation)
-				g.drawImage(Resource.images[Resource.selectbox2],
-						leftpointx + 39, toppointy + 66 + 70
-								* selectSoldierLocation, 20);
+			if (s == selectSoldierLocation) {
+				if (arrowIndex % 4 < 2)
+					g.drawImage(Resource.images[Resource.selectbox2],
+							leftpointx + 39, toppointy + 66 + 70
+									* selectSoldierLocation, 20);
+				else
+					g.drawImage(Resource.images[Resource.selectbox21],
+							leftpointx + 39, toppointy + 66 + 70
+									* selectSoldierLocation, 20);
+				g.drawImage(
+						Resource.images[Resource.gobarpoint],
+						leftpointx + 19,
+						toppointy
+								+ 100
+								+ (selectSoldierindex + s - selectSoldierLocation)
+								* 25, 20);
+			}
 			g.drawRegion(Resource.images[Resource.soldier0 + selectSoldierindex
 					+ s - selectSoldierLocation],
 					Resource.heroAndSoldierLevel[selectSoldierindex + s
@@ -2486,7 +2573,7 @@ public class GameEngine extends GameCanvasEngine {
 									* s, 20);
 					break;
 				} else if (ggg == 3) {
-					g.drawRegion(Resource.images[Resource.buttontext1], 0, 20,
+					g.drawRegion(Resource.images[Resource.buttontext1], 0, 60,
 							40, 20, 0, leftpointx + 113, toppointy + 101 + 70
 									* s, 20);
 				}
@@ -2495,17 +2582,16 @@ public class GameEngine extends GameCanvasEngine {
 		if (mainPage4Index == 0) {
 			DrawUtil.drawRect(g, leftpointx + 110, toppointy + 66 + 70
 					* selectSoldierLocation, 48, 30, 2, 0xff0000);
-
 		} else if (mainPage4Index == 1) {
 			DrawUtil.drawRect(g, leftpointx + 110, toppointy + 66 + 70
 					* selectSoldierLocation + 30, 48, 30, 2, 0xff0000);
 		}
 		g.drawImage(Resource.images[Resource.panel1], leftpointx + 290,
-				toppointy + 35, 20);
+				toppointy + 135, 20);
 		g.drawImage(Resource.images[Resource.bingzhonginfo], leftpointx + 300,
-				toppointy + 47, 20);
+				toppointy + 147, 20);
 		int bingzhong_x = leftpointx + 300;
-		int bingzhong_y = toppointy + 25;
+		int bingzhong_y = toppointy + 125;
 		setMyFont(20, false, 0);
 		if (Resource.heroAndSoldierLevel[selectSoldierindex] < 1) {
 			TextView.showSingleLineText(g,
@@ -2575,10 +2661,10 @@ public class GameEngine extends GameCanvasEngine {
 					1, bingzhong_x + 100, bingzhong_y + 130, 140, 100);
 		}
 		g.drawImage(Resource.images[Resource.selectforce], leftpointx + 396,
-				toppointy + 265, 20);
+				toppointy + 40, 20);
 		for (int s = 0; s < 4; s++) {
 			g.drawImage(Resource.images[Resource.select2], leftpointx + 300
-					+ 70 * s, toppointy + 300, 20);
+					+ 70 * s, toppointy + 70, 20);
 			if (Resource.savaSelcetSoldier[s] != -1) {
 				if (isLoadSold == s) {
 					drowChangeSoldierAnim(5);
@@ -2591,7 +2677,7 @@ public class GameEngine extends GameCanvasEngine {
 										+ Resource.savaSelcetSoldier[s]],
 								Resource.heroAndSoldierLevel[Resource.savaSelcetSoldier[s]] / 7 * 62,
 								0, 62, 62, 0, leftpointx + 300 + 70 * s,
-								toppointy + 300 + (moveToUPAndDown + 1) * 2, 20);
+								toppointy + 70 + (moveToUPAndDown + 1) * 2, 20);
 						moveToUPAndDown++;
 					} else {
 						g.drawRegion(
@@ -2599,7 +2685,7 @@ public class GameEngine extends GameCanvasEngine {
 										+ Resource.savaSelcetSoldier[s]],
 								Resource.heroAndSoldierLevel[Resource.savaSelcetSoldier[s]] / 7 * 62,
 								0, 62, 62, 0, leftpointx + 300 + 70 * s,
-								toppointy + 300 + (moveToUPAndDown - 4) * 2, 20);
+								toppointy + 70 + (moveToUPAndDown - 4) * 2, 20);
 						moveToUPAndDown++;
 						if (moveToUPAndDown == 5) {
 							moveToUPAndDown = 0;
@@ -2611,7 +2697,7 @@ public class GameEngine extends GameCanvasEngine {
 									+ Resource.savaSelcetSoldier[s]],
 							Resource.heroAndSoldierLevel[Resource.savaSelcetSoldier[s]] / 7 * 62,
 							0, 62, 62, 0, leftpointx + 300 + 70 * s,
-							toppointy + 300, 20);
+							toppointy + 70, 20);
 			}
 		}
 		g.drawImage(Resource.images[Resource.back0], panle_x + 300,
@@ -2670,7 +2756,7 @@ public class GameEngine extends GameCanvasEngine {
 			g.drawImage(Resource.images[86], 240 + 51, 60, 20);
 			g.drawImage(Resource.images[86], 240 + 68, 60, 20);
 			long dangqianTime = System.currentTimeMillis();
-			long TimeDuan = dangqianTime - Resource.resumeNengliangTime;
+			long TimeDuan = dangqianTime - entergameTime;
 			TextView.showSingleLineText(g, (15 * 60 * 1000 - TimeDuan) / 1000
 					/ 60 / 10 + "", 240, 60, 15, 20, TextView.STYLE_NORMAL);
 			TextView.showSingleLineText(g, (15 * 60 * 1000 - TimeDuan) / 1000
@@ -2681,6 +2767,10 @@ public class GameEngine extends GameCanvasEngine {
 					% 60 / 10 + "", 240 + 51, 60, 15, 20, TextView.STYLE_NORMAL);
 			TextView.showSingleLineText(g, (15 * 60 * 1000 - TimeDuan) / 1000
 					% 60 % 10 + "", 240 + 68, 60, 15, 20, TextView.STYLE_NORMAL);
+		}
+		if (!rankScore.equals("") && rankScore != null) {
+			TextView.showMultiLineText(g, "通天塔：第" + rankScore + "层\n排名："
+					+ rankNo, 0, 330, 50, 90, 30);
 		}
 	}
 
@@ -2727,45 +2817,40 @@ public class GameEngine extends GameCanvasEngine {
 					isAlertAward = false;
 				} else {
 					if (my.getCountAward() == 0) {
-						PopupConfirm pc = UIResource.getInstance()
-								.buildDefaultPopupConfirm();
-						pc.setText("是否花费" + pm.props[11].getPrice() + moneyUnit
-								+ "购买抽奖道具！");
 						alertTime = System.currentTimeMillis();
-						isAllStop = true;
-						if (pc.popup() == 0) {
+						StateExpense se = new StateExpense(this, 136 + 11);
+						se.processPrompt();
+						if (pm.isBuySuccess) {
 							enterBuy = 4;
-							boolean flag = pm.buyProp(147, 1);
-							if (flag) {
-								pm.reducePropNum(pm.props[11].getPropId());
-								startAward = true;
-								winNum = probability();
-								int temp = winNum - tempWinNum;
-								if (temp < 0) {
-									temp = 12 - (tempWinNum - winNum);
-								}
-								sumCircleNum = 24 + temp;
-								if (winNum == 0 || winNum == 4 || winNum == 8) {
-									my.setMoney(my.getMoney() + 1000);
-								} else if (winNum == 2 || winNum == 6) {
-									my.setMoney(my.getMoney() + 10000);
-								} else if (winNum == 10) {
-									my.setMoney(my.getMoney() + 99999);
-								} else if (winNum == 1) {
-									Resource.goodsNums[4]++;
-								} else if (winNum == 3) {
-									Resource.goodsNums[3]++;
-								} else if (winNum == 5) {
-									Resource.goodsNums[9]++;
-								} else if (winNum == 7) {
-									Resource.goodsNums[6]++;
-								} else if (winNum == 9) {
-									Resource.goodsNums[7]++;
-								} else if (winNum == 11) {
-									Resource.goodsNums[8]++;
-								}
+							pm.reducePropNum(pm.props[11].getPropId());
+							startAward = true;
+							winNum = probability();
+							int temp = winNum - tempWinNum;
+							if (temp < 0) {
+								temp = 12 - (tempWinNum - winNum);
+							}
+							sumCircleNum = 24 + temp;
+							if (winNum == 0 || winNum == 4 || winNum == 8) {
+								my.setMoney(my.getMoney() + 1000);
+							} else if (winNum == 2 || winNum == 6) {
+								my.setMoney(my.getMoney() + 10000);
+							} else if (winNum == 10) {
+								my.setMoney(my.getMoney() + 99999);
+							} else if (winNum == 1) {
+								pm.props[4].addNums();
+							} else if (winNum == 3) {
+								pm.props[3].addNums();
+							} else if (winNum == 5) {
+								pm.props[9].addNums();
+							} else if (winNum == 7) {
+								pm.props[6].addNums();
+							} else if (winNum == 9) {
+								pm.props[7].addNums();
+							} else if (winNum == 11) {
+								pm.props[8].addNums();
 							}
 						}
+						alertSumTime = System.currentTimeMillis() - alertTime;
 					} else if (my.getCountAward() >= 1) {
 						startAward = true;
 						winNum = probability();
@@ -2781,17 +2866,17 @@ public class GameEngine extends GameCanvasEngine {
 						} else if (winNum == 10) {
 							my.setMoney(my.getMoney() + 99999);
 						} else if (winNum == 1) {
-							Resource.goodsNums[4]++;
+							pm.props[4].addNums();
 						} else if (winNum == 3) {
-							Resource.goodsNums[3]++;
+							pm.props[3].addNums();
 						} else if (winNum == 5) {
-							Resource.goodsNums[9]++;
+							pm.props[9].addNums();
 						} else if (winNum == 7) {
-							Resource.goodsNums[6]++;
+							pm.props[6].addNums();
 						} else if (winNum == 9) {
-							Resource.goodsNums[7]++;
+							pm.props[7].addNums();
 						} else if (winNum == 11) {
-							Resource.goodsNums[8]++;
+							pm.props[8].addNums();
 						}
 					}
 				}
@@ -2800,7 +2885,7 @@ public class GameEngine extends GameCanvasEngine {
 			if (startAward)
 				return;
 			if (!isAlertAward) {
-				sag.saveData();
+				sag.saveRecord();
 				if (enterWayAward == 1) {
 					mainIndex = 0;
 					Resource.UnloadAward();
@@ -3119,7 +3204,7 @@ public class GameEngine extends GameCanvasEngine {
 				g.drawRegion(Resource.images[66], 62 * kj, 0, 62, 62, 0,
 						150 + kj * 80, 430, 20);
 				g.drawImage(Resource.images[65], 150 + kj * 80 + 40, 430, 20);
-				TextView.showSingleLineText(g, Resource.goodsNums[kj] + "",
+				TextView.showSingleLineText(g, pm.props[kj].getNums() + "",
 						150 + kj * 80 + 40, 430);
 				g.drawRegion(Resource.images[30], 0, 0, 47, 29, 0,
 						150 + kj * 80, 492, 20);
@@ -3127,13 +3212,13 @@ public class GameEngine extends GameCanvasEngine {
 			}
 			g.drawRegion(Resource.images[46], 24, 0, 23, 54, 0, 615, 430, 20);
 		} else {
-			for (int kj = 6; kj < Resource.goodsNums.length; kj++) {
+			for (int kj = 6; kj < 10; kj++) {
 				g.drawImage(Resource.images[14], 150 + (kj - 6) * 80, 430, 20);
 				g.drawRegion(Resource.images[66], 62 * kj, 0, 62, 62, 0,
 						150 + (kj - 6) * 80, 430, 20);
 				g.drawImage(Resource.images[65], 150 + (kj - 6) * 80 + 40, 430,
 						20);
-				TextView.showSingleLineText(g, Resource.goodsNums[kj] + "",
+				TextView.showSingleLineText(g, pm.props[kj].getNums() + "",
 						150 + (kj - 6) * 80 + 40, 430);
 				g.drawRegion(Resource.images[30], 0, 0, 47, 29, 0,
 						150 + (kj - 6) * 80, 492, 20);
@@ -3161,21 +3246,9 @@ public class GameEngine extends GameCanvasEngine {
 		if (key.containsAndRemove(KeyCode.OK)) {
 			enterBuy = 1;
 			if (shopArea == 1) {
-				PopupConfirm pc = UIResource.getInstance()
-						.buildDefaultPopupConfirm();
-				pc.setText("是否花费" + pm.props[selectShopSmallIndex].getPrice()
-						+ moneyUnit + "购买道具");
-				alertTime = System.currentTimeMillis();
-				isAllStop = true;
-				if (pc.popup() == 0) {
-					boolean flag = pm.buyProp(136 + selectShopSmallIndex, 1);
-					if (flag) {
-						if (selectShopSmallIndex == 10)
-							my.setMoney(my.getMoney() + 10000);
-						else
-							Resource.goodsNums[selectShopSmallIndex]++;
-					}
-				}
+				StateExpense se = new StateExpense(this,
+						136 + selectShopSmallIndex);
+				se.processPrompt();
 			} else if (shopArea == 2) {
 				if (canGoodsIndex >= 0 && canGoodsIndex <= 2) {
 					PopupText pt = UIResource.getInstance()
@@ -3185,15 +3258,14 @@ public class GameEngine extends GameCanvasEngine {
 				} else if (canGoodsIndex == 3) {
 					PopupText pt = UIResource.getInstance()
 							.buildDefaultPopupText();
-					if (isDoubleMoney) {
+					if (isDoubleExp) {
 						pt.setText("你现在已经拥有双倍经验的状态了，请不要再次使用！");
 						alertTimeFn(pt);
 					} else {
-						if (Resource.goodsNums[3] > 0) {
+						if (pm.props[3].getNums() > 0) {
 							pt.setText("你使用了双倍经验卡，在接下来一场战斗中，你将会获得双倍的经验！");
 							alertTimeFn(pt);
-							pm.reducePropNum(pm.props[3].getPropId());
-							Resource.goodsNums[3]--;
+							pm.props[3].reduceNums();
 							heroStateLength++;
 							isDoubleExp = true;
 							drawUseProp4();
@@ -3209,11 +3281,10 @@ public class GameEngine extends GameCanvasEngine {
 						pt.setText("你现在已经拥有双倍金币的状态了，请不要再次使用！");
 						alertTimeFn(pt);
 					} else {
-						if (Resource.goodsNums[4] > 0) {
+						if (pm.props[4].getNums() > 0) {
 							pt.setText("你使用了双倍金币卡，在接下来一场战斗中，你将会获得双倍的金币！");
 							alertTimeFn(pt);
-							pm.reducePropNum(pm.props[4].getPropId());
-							Resource.goodsNums[4]--;
+							pm.props[4].reduceNums();
 							heroStateLength++;
 							isDoubleMoney = true;
 							drawUseProp5();
@@ -3225,11 +3296,10 @@ public class GameEngine extends GameCanvasEngine {
 				} else if (canGoodsIndex == 5) {
 					PopupText pt = UIResource.getInstance()
 							.buildDefaultPopupText();
-					if (Resource.goodsNums[5] > 0) {
+					if (pm.props[5].getNums() > 0) {
 						pt.setText("你使用了能量石道具，使你的能量增加，能更好的去战斗！！");
 						alertTimeFn(pt);
-						pm.reducePropNum(pm.props[5].getPropId());
-						Resource.goodsNums[5]--;
+						pm.props[5].reduceNums();
 						drawUseProp6();
 					} else {
 						pt.setText("你还没有该道具，请购买后使用！");
@@ -3242,11 +3312,10 @@ public class GameEngine extends GameCanvasEngine {
 						pt.setText("你已经使用了军团之力，请不要再次使用！");
 						alertTimeFn(pt);
 					} else {
-						if (Resource.goodsNums[7] > 0) {
-							pt.setText("你使用了军团之力道具，在接下来一场战斗中，士兵的攻击力将提高20%！");
+						if (pm.props[7].getNums() > 0) {
+							pt.setText("你使用了军团之力道具，在接下来一场战斗中，士兵的攻击力将提高10%！");
 							alertTimeFn(pt);
-							pm.reducePropNum(pm.props[7].getPropId());
-							Resource.goodsNums[7]--;
+							pm.props[7].reduceNums();
 							heroStateLength++;
 							isEnhanceSoldierATK = true;
 						} else {
@@ -3261,11 +3330,10 @@ public class GameEngine extends GameCanvasEngine {
 						pt.setText("你已经使用了刚性护虎，请不要再次使用！");
 						alertTimeFn(pt);
 					} else {
-						if (Resource.goodsNums[8] > 0) {
+						if (pm.props[8].getNums() > 0) {
 							pt.setText("你使用了刚性护符道具，在接下来一场战斗中，你将会增加20点的防御力！");
 							alertTimeFn(pt);
-							pm.reducePropNum(pm.props[8].getPropId());
-							Resource.goodsNums[8]--;
+							pm.props[8].reduceNums();
 							heroStateLength++;
 							isEnhanceArmor = true;
 						} else {
@@ -3280,11 +3348,10 @@ public class GameEngine extends GameCanvasEngine {
 						pt.setText("你已经使用了生命谐音，请不要再次使用！");
 						alertTimeFn(pt);
 					} else {
-						if (Resource.goodsNums[9] > 0) {
+						if (pm.props[9].getNums() > 0) {
 							pt.setText("你使用了生命谐音道具，在接下来一场战斗中，你将会增加20%的生命值！");
 							alertTimeFn(pt);
-							pm.reducePropNum(pm.props[9].getPropId());
-							Resource.goodsNums[9]--;
+							pm.props[9].reduceNums();
 							heroStateLength++;
 							isEnhanceBoold = true;
 						} else {
@@ -3295,11 +3362,10 @@ public class GameEngine extends GameCanvasEngine {
 				} else if (canGoodsIndex == 10) {
 					PopupText pt = UIResource.getInstance()
 							.buildDefaultPopupText();
-					if (Resource.goodsNums[10] > 0) {
+					if (pm.props[10].getNums() > 0) {
 						pt.setText("你获得了10000金币！");
 						alertTimeFn(pt);
-						pm.reducePropNum(pm.props[10].getPropId());
-						Resource.goodsNums[10]--;
+						pm.props[10].reduceNums();
 						drawUseProp11();
 					} else {
 						pt.setText("你还没有该道具，请购买后使用！");
@@ -3355,7 +3421,7 @@ public class GameEngine extends GameCanvasEngine {
 				}
 			} else if (shopArea == 2) {
 				canGoodsIndex++;
-				if (canGoodsIndex > Resource.goodsNums.length - 1) {
+				if (canGoodsIndex > 9) {
 					canGoodsIndex--;
 				}
 			}
@@ -3385,7 +3451,7 @@ public class GameEngine extends GameCanvasEngine {
 		} else if (key.containsAndRemove(KeyCode.NUM0)) {
 			Resource.UnloadShop();
 			Resource.loadMain();
-			sag.saveData();
+			sag.saveRecord();
 			mainIndex = 0;
 			shopPage = 0;
 		}
@@ -3416,17 +3482,17 @@ public class GameEngine extends GameCanvasEngine {
 				panle_x + 80, panle_y - 20, 20);
 		mayEnterButton = drawStar1(tempStar);
 		if (isDoubleExp)
-			TextView.showSingleLineText(g, "获得的双倍经验：" + winExp, panle_x + 80,
-					panle_y + 70);
+			TextView.showSingleLineText(g, "获得的双倍经验：" + winExp, panle_x,
+					panle_y + 70, 280, 30, TextView.STYLE_ALIGN_CENTER);
 		else
-			TextView.showSingleLineText(g, "获得的经验：" + winExp, panle_x + 80,
-					panle_y + 70);
+			TextView.showSingleLineText(g, "获得的经验：" + winExp, panle_x,
+					panle_y + 70, 280, 30, TextView.STYLE_ALIGN_CENTER);
 		if (isDoubleMoney)
-			TextView.showSingleLineText(g, "获得的双倍金币：" + winMoney, panle_x + 80,
-					panle_y + 90);
+			TextView.showSingleLineText(g, "获得的双倍金币：" + winMoney, panle_x,
+					panle_y + 100, 280, 30, TextView.STYLE_ALIGN_CENTER);
 		else
-			TextView.showSingleLineText(g, "获得的金币：" + winMoney, panle_x + 80,
-					panle_y + 90);
+			TextView.showSingleLineText(g, "获得的金币：" + winMoney, panle_x,
+					panle_y + 100, 280, 30, TextView.STYLE_ALIGN_CENTER);
 		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
 				panle_x + 155, panle_y + 175, 20);
 		g.drawImage(Resource.images[Resource.queding], panle_x + 187,
@@ -3447,12 +3513,12 @@ public class GameEngine extends GameCanvasEngine {
 		setMyFont(20, false, 0);
 		g.drawRegion(Resource.images[Resource.shenglishibai], 0, 0, 125, 64, 0,
 				panle_x + 80, panle_y - 20, 20);
-		TextView.showSingleLineText(g, "获得的经验：" + tongtiantaExp, panle_x + 60,
-				panle_y + 70);
-		TextView.showSingleLineText(g, "获得的金币：" + tongtiantaMoney,
-				panle_x + 60, panle_y + 90);
+		TextView.showSingleLineText(g, "获得的经验：" + tongtiantaExp, panle_x,
+				panle_y + 65, 280, 30, TextView.STYLE_ALIGN_CENTER);
+		TextView.showSingleLineText(g, "获得的金币：" + tongtiantaMoney, panle_x,
+				panle_y + 95, 280, 30, TextView.STYLE_ALIGN_CENTER);
 		TextView.showMultiLineText(g, "继续挑战获得更多经验和金钱！", TextView.STYLE_NORMAL,
-				panle_x + 50, panle_y + 110, 200, 100);
+				panle_x + 50, panle_y + 125, 200, 100);
 		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
 				panle_x + 155, panle_y + 175, 20);
 		g.drawRegion(Resource.images[Resource.fight], 0, 20 * 2, 80, 20, 0,
@@ -3536,8 +3602,27 @@ public class GameEngine extends GameCanvasEngine {
 		setMyFont(20, false, 0);
 		g.drawRegion(Resource.images[Resource.shenglishibai], 125, 0, 125, 64,
 				0, panle_x + 80, panle_y - 20, 20);
-		TextView.showMultiLineText(g, "使用复活可以继续游戏。", 10, panle_x + 50,
-				panle_y + 60, 180, 20);
+		if (WinAndFailIndex == 0) {
+			TextView.showMultiLineText(g, "提升英雄的等级，\n替换更强的英雄。", 10,
+					panle_x + 50, panle_y + 60, 180, 60);
+		} else if (WinAndFailIndex == 1) {
+			TextView.showMultiLineText(g, "提升士兵的等级，\n替换更强的士兵。", 10,
+					panle_x + 50, panle_y + 60, 180, 60);
+		} else if (WinAndFailIndex == 2) {
+			TextView.showMultiLineText(g, "返回关卡选择界面。", 10, panle_x + 50,
+					panle_y + 60, 180, 20);
+		} else if (WinAndFailIndex == 3) {
+			TextView.showMultiLineText(g, "战斗中复活继续游戏。", 10, panle_x + 50,
+					panle_y + 60, 180, 20);
+		}
+		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
+				panle_x + 30, panle_y + 135, 20);
+		g.drawRegion(Resource.images[Resource.buttontext2], 0, 0, 80, 20, 0,
+				panle_x + 38, panle_y + 140, 20);
+		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
+				panle_x + 155, panle_y + 135, 20);
+		g.drawRegion(Resource.images[Resource.buttontext2], 0, 20, 80, 20, 0,
+				panle_x + 163, panle_y + 140, 20);
 		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
 				panle_x + 30, panle_y + 175, 20);
 		g.drawRegion(Resource.images[Resource.fight], 0, 20 * 4, 80, 20, 0,
@@ -3546,8 +3631,8 @@ public class GameEngine extends GameCanvasEngine {
 				panle_x + 155, panle_y + 175, 20);
 		g.drawRegion(Resource.images[Resource.fight], 0, 20 * 3, 80, 20, 0,
 				panle_x + 163, panle_y + 180, 20);
-		DrawUtil.drawRect(g, panle_x + 30 + 125 * WinAndFailIndex,
-				panle_y + 175, 95, 29, 2, 0xff0000);
+		DrawUtil.drawRect(g, panle_x + 30 + 125 * (WinAndFailIndex % 2),
+				panle_y + 135 + 40 * (WinAndFailIndex / 2), 95, 29, 2, 0xff0000);
 	}
 
 	public void drawTongtiantaFail() {
@@ -3557,12 +3642,32 @@ public class GameEngine extends GameCanvasEngine {
 		setMyFont(20, false, 0);
 		g.drawRegion(Resource.images[Resource.shenglishibai], 125, 0, 125, 64,
 				0, panle_x + 80, panle_y - 20, 20);
-		TextView.showSingleLineText(g, "获得的经验：" + tongtiantaExp, panle_x + 80,
-				panle_y + 70);
-		TextView.showSingleLineText(g, "获得的金币：" + tongtiantaMoney,
-				panle_x + 80, panle_y + 90);
-		TextView.showMultiLineText(g, "挑战失败损失一半的奖励！", TextView.STYLE_NORMAL,
-				panle_x + 50, panle_y + 110, 200, 100);
+		if (WinAndFailIndex == 0) {
+			TextView.showMultiLineText(g, "提升英雄的等级，\n替换更强的英雄。", 10,
+					panle_x + 50, panle_y + 60, 180, 60);
+		} else if (WinAndFailIndex == 1) {
+			TextView.showMultiLineText(g, "提升士兵的等级，\n替换更强的士兵。", 10,
+					panle_x + 50, panle_y + 60, 180, 60);
+		} else if (WinAndFailIndex == 2) {
+			TextView.showSingleLineText(g, "获得的经验：" + tongtiantaExp,
+					panle_x + 80, panle_y + 70);
+			TextView.showSingleLineText(g, "获得的金币：" + tongtiantaMoney,
+					panle_x + 80, panle_y + 90);
+			TextView.showMultiLineText(g, "挑战失败损失一半的奖励！",
+					TextView.STYLE_NORMAL, panle_x + 50, panle_y + 110, 200,
+					100);
+		} else if (WinAndFailIndex == 3) {
+			TextView.showMultiLineText(g, "战斗中复活继续游戏。", 10, panle_x + 50,
+					panle_y + 60, 180, 20);
+		}
+		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
+				panle_x + 30, panle_y + 135, 20);
+		g.drawRegion(Resource.images[Resource.buttontext2], 0, 0, 80, 20, 0,
+				panle_x + 38, panle_y + 140, 20);
+		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
+				panle_x + 155, panle_y + 135, 20);
+		g.drawRegion(Resource.images[Resource.buttontext2], 0, 20, 80, 20, 0,
+				panle_x + 163, panle_y + 140, 20);
 		g.drawRegion(Resource.images[Resource.button2], 0, 0, 95, 29, 0,
 				panle_x + 30, panle_y + 175, 20);
 		g.drawRegion(Resource.images[Resource.fight], 0, 20 * 4, 80, 20, 0,
@@ -3571,8 +3676,8 @@ public class GameEngine extends GameCanvasEngine {
 				panle_x + 155, panle_y + 175, 20);
 		g.drawRegion(Resource.images[Resource.fight], 0, 20 * 3, 80, 20, 0,
 				panle_x + 163, panle_y + 180, 20);
-		DrawUtil.drawRect(g, panle_x + 30 + 125 * WinAndFailIndex,
-				panle_y + 175, 95, 29, 2, 0xff0000);
+		DrawUtil.drawRect(g, panle_x + 30 + 125 * (WinAndFailIndex % 2),
+				panle_y + 135 + 40 * (WinAndFailIndex / 2), 95, 29, 2, 0xff0000);
 	}
 
 	public void ArrayHandle(Vector v, int imgIndex, int block) {
@@ -3582,6 +3687,46 @@ public class GameEngine extends GameCanvasEngine {
 						block);
 			}
 		}
+	}
+
+	int moveTishiIndex;
+	long moveTishitime;
+	boolean ismoveTishi;
+	boolean moveTishiChange;
+
+	private void drawTishi(int index) {
+		String s;
+		if (moveTishiChange) {
+			moveTishiIndex = 0;
+			moveTishitime = 0;
+			moveTishiChange = false;
+		}
+		if (index == 0) {
+			s = "按方向键移动士兵，按确定键选择士兵。";
+		} else {
+			s = "按‘5’键释放技能。";
+		}
+		int length = s.length() + 1;
+		if (moveTishiIndex != length && moveTishitime == 0) {
+			moveTishiIndex++;
+			if (moveTishiIndex == length)
+				moveTishitime = System.currentTimeMillis();
+		} else {
+			if (System.currentTimeMillis() - moveTishitime > 5000) {
+				if (moveTishiIndex != 0) {
+					moveTishiIndex--;
+				} else {
+					moveTishitime = 0;
+					ismoveTishi = false;
+					tishiWay = -1;
+				}
+			}
+		}
+		int tempMove = this.getScreenWidth() - moveTishiIndex * 20;
+		DrawUtil.drawRect(0x8b6914, g, tempMove, 10, length * 20, 20);
+		setMyFont(20, true, 0xffffff);
+		TextView.showSingleLineText(g, s, tempMove + 10, 10, length * 20, 20,
+				TextView.STYLE_NORMAL);
 	}
 
 	public void drawSuggest() {
@@ -3609,6 +3754,9 @@ public class GameEngine extends GameCanvasEngine {
 				temp_y + 150, 20);
 	}
 
+	int tishiCount;
+	long tishiSkillTime;
+
 	public void drawGame() {
 		if (isAllStop || GameEngine.mainIndex == 21
 				|| GameEngine.mainIndex == 22 || isSuggest || stopState) {
@@ -3626,6 +3774,9 @@ public class GameEngine extends GameCanvasEngine {
 		drawMonster();
 		drawSoldier();
 		drawMoveSoldier();
+		if (ismoveTishi) {
+			drawTishi(tishiWay);
+		}
 		if (bossStart) {
 			for (int kg = 0; kg < monsterVector.size(); kg++) {
 				if (((Monster) monsterVector.elementAt(kg)).getKind() == 14)
@@ -3764,10 +3915,9 @@ public class GameEngine extends GameCanvasEngine {
 		else
 			g.drawImage(Resource.images[Resource.back0], 520, 410, 20);
 		if (GameEngine.mainIndex == 21) {
-			recharge.draw(g);
+			// recharge.draw(g);
 		} else if (GameEngine.mainIndex == 22) {
-			recharge.draw(g);
-			prompt.draw(g);
+			// recharge.draw(g);
 		}
 		if (Wave.isShow() && 2000 > System.currentTimeMillis() - Wave.getTime()) {
 			Wave.draw(g, mapIndexOfIndex - 1);
@@ -3864,12 +4014,14 @@ public class GameEngine extends GameCanvasEngine {
 					11 + (((Monster) (heroSkillmonster.elementAt(0))).getX() - 1) * 60 + 20,
 					0);
 			hero.setMagic(0, 0);
+			tishiSkillIndex = 0;
 		}
 	}
 
 	public void auto3Skill() {
 		skill1Hero = new Point(hero.getX(), hero.getY(), 0);
 		hero.setMagic(0, 0);
+		tishiSkillIndex = 0;
 		hero.setBoold(hero.getBoold() + 200);
 		if (hero.getBoold() > hero.getBoolds())
 			hero.setBoold(hero.getBoolds());
@@ -3884,6 +4036,7 @@ public class GameEngine extends GameCanvasEngine {
 			}
 			skill1Hero = new Point(180, 30, 0);
 			hero.setMagic(0, 0);
+			tishiSkillIndex = 0;
 		}
 	}
 
@@ -3933,7 +4086,6 @@ public class GameEngine extends GameCanvasEngine {
 			if (mapIndexOfIndex < 4) {
 				Wave.setShow(true);
 				Wave.setTime(System.currentTimeMillis());
-				changeo();
 				getMonster();
 				return 0;
 			} else {
@@ -4001,8 +4153,8 @@ public class GameEngine extends GameCanvasEngine {
 										isUnfoldAttainment = true;
 										isAttainment2 = true;
 										my.setMoney(my.getMoney()
-												+ Resource.AttainmentMoney[UnfoldAttainmentIndex]);
-										Resource.isFinishAttainment[UnfoldAttainmentIndex] = 1;
+												+ Resource.AttainmentMoney[UnfoldAttainmentIndex1]);
+										Resource.isFinishAttainment[UnfoldAttainmentIndex1] = 1;
 									}
 								}
 							}
@@ -4530,14 +4682,15 @@ public class GameEngine extends GameCanvasEngine {
 	}
 
 	private void addNengliang() {
-		if (System.currentTimeMillis() - Resource.resumeNengliangTime > 60 * 15 * 1000) {
+		long nowTime = System.currentTimeMillis();
+		if (nowTime - entergameTime > 60 * 15 * 1000) {
 			my.setNengliang(my.getNengliang() + 1);
 			if (my.getNengliang() > Upgrade.upgradeLeaderNengliang((int) my
 					.getLevel())) {
 				my.setNengliang(Upgrade.upgradeLeaderNengliang((int) my
 						.getLevel()));
 			}
-			Resource.resumeNengliangTime = System.currentTimeMillis();
+			entergameTime = nowTime;
 		}
 	}
 
@@ -5251,8 +5404,9 @@ public class GameEngine extends GameCanvasEngine {
 						bossMoveindex = 0;
 						calculateHeroBoold(Resource.MonsterAttack[32], 16);
 						int tempMagics = hero.getMagic() >= 30 ? (hero
-								.getBoold() - 30) : 0;
+								.getMagic() - 30) : 0;
 						hero.setMagic(tempMagics, 0);
+						tishiSkillIndex = 0;
 						if (StrikeHero.getInstance().getIndexAnim() == 4) {
 							StrikeHero.getInstance().setIndexAnim(0);
 						}
@@ -5721,89 +5875,100 @@ public class GameEngine extends GameCanvasEngine {
 
 	public void drawSoldier() {
 		if (indexSelect == -1) {
-			g.drawImage(Resource.images[Resource.selectbox1],
-					index % 4 * 60 + 17, ((int) (index / 4)) * 60 + 11, 0);
+			if (arrowIndex % 4 < 2) {
+				g.drawImage(Resource.images[Resource.selectbox1],
+						index % 4 * 60 + 17, ((int) (index / 4)) * 60 + 11, 0);
+			} else {
+				g.drawImage(Resource.images[Resource.selectbox11],
+						index % 4 * 60 + 17, ((int) (index / 4)) * 60 + 11, 0);
+			}
 		} else if (indexSelect != -1) {
-			g.drawImage(Resource.images[Resource.selectbox2],
-					index % 4 * 60 + 17, ((int) (index / 4)) * 60 + 11, 0);
+			if (arrowIndex % 4 < 2) {
+				g.drawImage(Resource.images[Resource.selectbox2],
+						index % 4 * 60 + 17, ((int) (index / 4)) * 60 + 11, 0);
+			} else {
+				g.drawImage(Resource.images[Resource.selectbox21],
+						index % 4 * 60 + 17, ((int) (index / 4)) * 60 + 11, 0);
+			}
 		}
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 4; j++) {
 				if (idPic[i][j] != null) {
-					if (System.currentTimeMillis() - tishi > 10 * 1000) {
-						if (tishiIndex == 0) {
-							tishiIndex = 1;
-							youle = ca.vectorArray1(idPic);
-							g.drawRegion(Resource.images[Resource.soldier0
-									+ idPic[i][j].getAuthenticKind()],
-									Resource.heroAndSoldierLevel[idPic[i][j]
-											.getAuthenticKind()] / 7 * 62, 0,
-									62, 62, 0,
-									j * 60 + 17 + idPic[i][j].getOffX(), i * 60
-											+ idPic[i][j].getOffY() + 11, 0);
-						} else if (tishiIndex == 1) {
-							if (youle != null) {
-								if (i == youle[0] && j == youle[1]) {
-									if (arrowIndex % 4 < 2)
-										g.drawRegion(
-												Resource.images[Resource.soldier0
-														+ idPic[i][j]
-																.getAuthenticKind()],
-												Resource.heroAndSoldierLevel[idPic[i][j]
-														.getAuthenticKind()] / 7 * 62,
-												0,
-												62,
-												62,
-												0,
-												j * 60 + 17
-														+ idPic[i][j].getOffX(),
-												i * 60 + idPic[i][j].getOffY()
-														+ 11, 0);
-								} else {
-									g.drawRegion(
-											Resource.images[Resource.soldier0
-													+ idPic[i][j]
-															.getAuthenticKind()],
-											Resource.heroAndSoldierLevel[idPic[i][j]
-													.getAuthenticKind()] / 7 * 62,
-											0,
-											62,
-											62,
-											0,
-											j * 60 + 17 + idPic[i][j].getOffX(),
-											i * 60 + idPic[i][j].getOffY() + 11,
-											0);
-								}
-							} else {
-								g.drawRegion(
-										Resource.images[Resource.soldier0
-												+ idPic[i][j]
-														.getAuthenticKind()],
-										Resource.heroAndSoldierLevel[idPic[i][j]
-												.getAuthenticKind()] / 7 * 62,
-										0, 62, 62, 0,
-										j * 60 + 17 + idPic[i][j].getOffX(), i
-												* 60 + idPic[i][j].getOffY()
-												+ 11, 0);
-							}
+					g.drawRegion(Resource.images[Resource.soldier0
+							+ idPic[i][j].getAuthenticKind()],
+							Resource.heroAndSoldierLevel[idPic[i][j]
+									.getAuthenticKind()] / 7 * 62, 0, 62, 62,
+							0, j * 60 + 17 + idPic[i][j].getOffX(), i * 60
+									+ idPic[i][j].getOffY() + 11, 0);
+				}
+			}
+		}
+		if (!stopState
+				&& !isSuggest
+				&& ((System.currentTimeMillis() - tishi > 10 * 1000) || (tongtiantaAndNormalBigGuanqia == 1
+						&& tongtiantaAndNormalSmallGuanqia == 0 && tishiCount < 4))) {
+			if (tongtiantaAndNormalBigGuanqia == 1
+					&& tongtiantaAndNormalSmallGuanqia == 0 && tishiCount < 4) {
+				tishiWay = 0;
+			}
+			if (tishiIndex == 0) {
+				tishiIndex = 1;
+				tishiCount++;
+				movetishiCount = 0;
+				tishiSkillIndex = 0;
+				youle = ca.vectorArray1(idPic);
+			} else if (tishiIndex == 1) {
+				if (youle != null) {
+					if (movetishiCount == 0) {
+						if (tishiWay != 1) {
+							tishiWay = 0;
+							ismoveTishi = true;
+							movetishiCount = 1;
+						}
+					}
+					for (int hj = 1; hj < youle.length; hj++) {
+						g.drawRegion(Resource.images[Resource.tishi1],
+								(arrowIndex % 6) / 2 * 60, 0, 60, 60, 0,
+								youle[hj][1] * 60 + 17, youle[hj][0] * 60 + 11,
+								0);
+					}
+					if (youle[0][0] == youle[1][0]) {
+						if (youle[0][1] > youle[1][1]) {
+							g.drawImage(Resource.images[Resource.tishi2],
+									youle[1][1] * 60 + 17 + tishiMove * 10,
+									youle[1][0] * 60 + 40, 20);
+						} else {
+							g.drawImage(
+									Resource.images[Resource.tishi2],
+									youle[1][1] * 60 + 17 - tishiMove * 10 + 40,
+									youle[1][0] * 60 + 40, 0);
 						}
 					} else {
-						g.drawRegion(Resource.images[Resource.soldier0
-								+ idPic[i][j].getAuthenticKind()],
-								Resource.heroAndSoldierLevel[idPic[i][j]
-										.getAuthenticKind()] / 7 * 62, 0, 62,
-								62, 0, j * 60 + 17 + idPic[i][j].getOffX(), i
-										* 60 + idPic[i][j].getOffY() + 11, 0);
+						if (youle[0][0] > youle[1][0]) {
+							g.drawImage(Resource.images[Resource.tishi2],
+									youle[1][1] * 60 + 45, youle[1][0] * 60
+											+ 11 + tishiMove * 10, 0);
+						} else {
+							g.drawImage(Resource.images[Resource.tishi2],
+									youle[1][1] * 60 + 45, youle[1][0] * 60
+											+ 11 - tishiMove * 10 + 40, 0);
+						}
 					}
-
+					tishiMove++;
+					if (tishiMove == 12) {
+						tishiMove = 0;
+					}
 				}
 			}
 		}
 	}
 
-	static int[] youle = new int[2];
+	int movetishiCount;
+	int tishiMove;
+	static int[][] youle = new int[28][2];
 	public static long tishi;
 	public static int tishiIndex;
+	int tishiWay;
 
 	public void judgeRemove() {
 		if (win1 == 1) {
@@ -6607,6 +6772,8 @@ public class GameEngine extends GameCanvasEngine {
 		}
 	}
 
+	int tishiSkillIndex;
+
 	public void drawHeroInfo1(Hero hero) {
 		int temp_x = 5;
 		int temp_y = 435;
@@ -6626,20 +6793,27 @@ public class GameEngine extends GameCanvasEngine {
 		for (int i = 0; i < 3; i++) {
 			g.drawImage(Resource.images[Resource.select2], Hero.booldX + 226
 					+ 78 * i, Hero.booldY - 30, 20);
-			g.drawRegion(Resource.images[Resource.shoptool], i * 62, 0, 62, 62,
-					0, Hero.booldX + 226 + 78 * i, Hero.booldY - 30, 20);
+			if (i == 0 && hero.getBoold() <= hero.getBoolds() * 2 / 10) {
+				if (arrowIndex % 4 < 2)
+					g.drawRegion(Resource.images[Resource.shoptool], i * 62, 0,
+							62, 62, 0, Hero.booldX + 226 + 78 * i,
+							Hero.booldY - 30, 20);
+			} else {
+				g.drawRegion(Resource.images[Resource.shoptool], i * 62, 0, 62,
+						62, 0, Hero.booldX + 226 + 78 * i, Hero.booldY - 30, 20);
+			}
 			g.drawImage(Resource.images[Resource.toolnumkey], Hero.booldX + 218
 					+ 78 * i, Hero.booldY + 23, 20);
 			g.drawImage(Resource.images[Resource.shopthingnum], Hero.booldX
 					+ 265 + 78 * i, Hero.booldY - 30, 20);
 			setMyFont(10, false, 0x000000);
-			TextView.showSingleLineText(g, "" + Resource.goodsNums[i],
+			TextView.showSingleLineText(g, "" + pm.props[i].getNums(),
 					Hero.booldX + 272 + 78 * i + 2, Hero.booldY - 30 + 2);
 			TextView.showSingleLineText(g, "按键" + (i + 1), Hero.booldX + 218
 					+ 78 * i + 2, Hero.booldY + 23 + 2, 76, 26,
 					TextView.STYLE_ALIGN_CENTER);
 			setMyFont(10, false, 0xffffff);
-			TextView.showSingleLineText(g, "" + Resource.goodsNums[i],
+			TextView.showSingleLineText(g, "" + pm.props[i].getNums(),
 					Hero.booldX + 272 + 78 * i, Hero.booldY - 30);
 			TextView.showSingleLineText(g, "按键" + (i + 1), Hero.booldX + 218
 					+ 78 * i, Hero.booldY + 23, 76, 26,
@@ -6653,6 +6827,15 @@ public class GameEngine extends GameCanvasEngine {
 			g.drawRegion(Resource.images[Resource.shanmove],
 					arrowIndex % 3 * 35, 0, 35, 35, 0, hero.getX() + 95,
 					hero.getY() - 5, 20);
+			if (tishiSkillIndex == 0) {
+				if (ismoveTishi && tishiWay == 0) {
+					moveTishiChange = true;
+				} else if (!ismoveTishi) {
+					ismoveTishi = true;
+				}
+				tishiSkillIndex++;
+				tishiWay = 1;
+			}
 		}
 		setMyFont(10, false, 0);
 		TextView.showMultiLineText(g, "按'5'键放技能", TextView.STYLE_ALIGN_CENTER,
@@ -6717,7 +6900,8 @@ public class GameEngine extends GameCanvasEngine {
 
 	private void drawUnfoldAttainment(int attainmentIndex, int op) {
 		Resource.loadMoveAtt();
-		attainmentPanelStartTime = attainmentPanelStartTime + alertSumTime;
+		if (op != 1)
+			attainmentPanelStartTime = attainmentPanelStartTime + alertSumTime;
 		if (System.currentTimeMillis() - attainmentPanelStartTime <= 5000) {
 			for (int i = 0; i < attainmentPanelIndex; i++) {
 				g.drawRegion(Resource.images[Resource.chengjiupanel], 37, 7, 4,
@@ -6749,20 +6933,22 @@ public class GameEngine extends GameCanvasEngine {
 						29 + op * 110, 20);
 				setMyFont(20, false, 0);
 				TextView.showSingleLineText(g,
-						Resource.AttainmentName[attainmentIndex], 235, 40, 114,
-						20 + op * 110, TextView.STYLE_ALIGN_CENTER);
+						Resource.AttainmentName[attainmentIndex], 235,
+						40 + op * 110, 114, 20, TextView.STYLE_ALIGN_CENTER);
 				setMyFont(10, false, 0);
 				TextView.showSingleLineText(g, "奖励"
 						+ Resource.AttainmentMoney[attainmentIndex] + "金币",
-						235, 80, 114, 20 + op * 110,
+						235, 80 + op * 110, 114, 20,
 						TextView.STYLE_ALIGN_CENTER);
 			}
 		} else {
 			isUnfoldAttainment = false;
+			isAttainment1 = false;
+			isAttainment2 = false;
 			attainmentPanelStartTime = 0;
 			attainmentPanelIndex = 1;
+			Resource.UnloadMoveAtt();
 		}
-		Resource.UnloadMoveAtt();
 	}
 
 	public boolean judgeCritical() {
@@ -7095,7 +7281,7 @@ public class GameEngine extends GameCanvasEngine {
 						changgeSucceed = 1;
 						isLoadSold = j;
 						move_long_x = 320 + 70 * j - 60;
-						move_long_y = 410 - 176 - 70 * selectSoldierLocation;
+						move_long_y = 170 - 176 - 70 * selectSoldierLocation;
 						move_long_count = 1;
 						break IT;
 					} else if (j == 3) {
@@ -7120,7 +7306,7 @@ public class GameEngine extends GameCanvasEngine {
 			g.drawRegion(
 					Resource.images[Resource.soldier0 + selectSoldierindex],
 					Resource.heroAndSoldierLevel[selectSoldierindex] / 7 * 62,
-					0, 62, 62, 0, 320 + 70 * isLoadSold, 410, 20);
+					0, 62, 62, 0, 320 + 70 * isLoadSold, 180, 20);
 			isLoadSold = -1;
 			if (newGuideIndex == 27) {
 				newGuideIndex = 28;
@@ -7147,6 +7333,7 @@ public class GameEngine extends GameCanvasEngine {
 	public void monster10AttackAndAbsorbOfHero() {
 		hero.setBoold(hero.getBoold() - 50);
 		hero.setMagic(hero.getMagic() - 10, 0);
+		tishiSkillIndex = 0;
 		if (hero.getBoold() < 0) {
 			hero.setBoold(0);
 		}
@@ -7253,7 +7440,7 @@ public class GameEngine extends GameCanvasEngine {
 		alertSumTime = 0;
 		handleKey(keyState);
 		if (isDebugMode()) {
-			addDebugUserMessage("debug模式1键可以加钱！");
+			addDebugUserMessage("debug模式1键可以加钱！" + System.currentTimeMillis());
 		}
 	}
 
@@ -7336,15 +7523,31 @@ public class GameEngine extends GameCanvasEngine {
 		idPic[x2][y2] = idPic1;
 	}
 
+	public boolean loadData() {
+		init();
+		return true;
+	}
+
+	public void waitTime() {
+		long time = System.currentTimeMillis();
+		while (iptv_link.result == -1
+				&& System.currentTimeMillis() - time < 5000) {
+		}
+	}
+
+	private void init() {
+		pm = new PropManager(this);
+		pm.queryProps();
+		my = new Myself();
+		sag = new SaveAndGet(this, pm);
+		sag.readRecord();
+		sag.queryCoin();
+		// checkPaiming();
+	}
+
 	public void handleKey(KeyState key) {
 		if (page == Resource.PAGE_INDEX[0]) {
 			if (key.containsAndRemove(KeyCode.OK)) {
-				pm = new PropManager();
-				pm.queryProps();
-				sag = new SaveAndGet(this, pm);
-				sag.queryCoin();
-				my = new Myself();
-				sag.readRecord();
 				if (Resource.tongtiantafloor > 40) {
 					tongtiantaPass40 = 1;
 				} else {
@@ -7390,23 +7593,21 @@ public class GameEngine extends GameCanvasEngine {
 			else if (mainIndex == 12)
 				handleMainKey12(key);
 			else if (mainIndex == 21)
-				recharge.update(key);
+				// recharge.update(key);
+				;
 			else if (mainIndex == 22) {
-				prompt.update(key);
 			}
 		} else if (page == Resource.PAGE_INDEX[2]) {
 			if (gameIndex == 0) {
 				if (mainIndex == 21) {
-					recharge.update(key);
+					// recharge.update(key);
 				} else if (mainIndex == 22) {
-					prompt.update(key);
 				} else
 					handleGameKey(key);
 			} else if (gameIndex == 1) {
 				if (mainIndex == 21) {
-					recharge.update(key);
+					// recharge.update(key);
 				} else if (mainIndex == 22) {
-					prompt.update(key);
 				} else
 					handeGameOver1(key);
 			} else if (gameIndex == 2)
@@ -7414,86 +7615,127 @@ public class GameEngine extends GameCanvasEngine {
 			else if (gameIndex == 3)
 				handeStop(key);
 			else if (gameIndex == 4) {
-				if (mainIndex == 21) {
-					recharge.update(key);
-				} else if (mainIndex == 22) {
-					prompt.update(key);
-				} else
-					handeSuggest(key);
+				handeSuggest(key);
 			} else if (gameIndex == 8)
 				handeGameOver8(key);
 			else if (gameIndex == 9) {
 				if (mainIndex == 21) {
-					recharge.update(key);
+					// recharge.update(key);
 				} else if (mainIndex == 22) {
-					prompt.update(key);
 				} else
 					handeGameOver9(key);
 			}
 		}
 	}
 
+	protected void checkPaiming() {
+		// sag.readRecord();
+		// System.out.println("查询排名！！！");
+		// RankInfo[] ri = sag.queryRankList();
+		// if (ri != null) {
+		// rankScore = ri[1].score;
+		// rankNo = ri[1].rankNo;
+		// rankBigScore = ri[0].score;
+		// }
+	}
+
 	private void handeGameOver9(KeyState key) {
 		if (key.containsAndRemove(KeyCode.OK)) {
-			if (WinAndFailIndex == 1) {
-				PopupConfirm pc = UIResource.getInstance()
-						.buildDefaultPopupConfirm();
-				pc.setText("是否花费" + pm.props[13].getPrice() + moneyUnit
-						+ "购买复活道具？");
+			if (WinAndFailIndex == 0) {
+				enterWay = 2;
+				mainIndex = 3;
+				isEnhanceBoold = false;
+				isEnhanceArmor = false;
+				isEnhanceSoldierATK = false;
+				isDoubleAtk = false;
+				isDoubleExp = false;
+				isDoubleMoney = false;
+				Soldier.setAtkCoefficient(1.0f);
+				gameIndex = 0;
+				page = Resource.PAGE_INDEX[1];
+				mapIndexOfIndex = 0;
+				stopState = false;
+				my.setCountTongtianta(0);
+				sag.saveRecord();
+				checkPaiming();
+				Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
+				Resource.UnloadGameHero(Resource.saveSelectHero);
+				Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
+				Resource.UnloadMonster(monsterKind);
+				Resource.UnloadWinAndFail();
+				Resource.loadHero();
+				Resource.loadMainInfo();
+			} else if (WinAndFailIndex == 1) {
+				enterWay = 2;
+				mainIndex = 4;
+				isLoadSold = -1;
+				isEnhanceBoold = false;
+				isEnhanceArmor = false;
+				isEnhanceSoldierATK = false;
+				isDoubleAtk = false;
+				isDoubleExp = false;
+				isDoubleMoney = false;
+				Soldier.setAtkCoefficient(1.0f);
+				gameIndex = 0;
+				page = Resource.PAGE_INDEX[1];
+				mapIndexOfIndex = 0;
+				stopState = false;
+				my.setCountTongtianta(0);
+				sag.saveRecord();
+				checkPaiming();
+				Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
+				Resource.UnloadGameHero(Resource.saveSelectHero);
+				Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
+				Resource.UnloadMonster(monsterKind);
+				Resource.UnloadWinAndFail();
+				Resource.loadSoldier();
+				Resource.loadMainInfo();
+			} else if (WinAndFailIndex == 3) {
 				alertTime = System.currentTimeMillis();
-				if (pc.popup() == 0) {
+				StateExpense se = new StateExpense(this, 136 + 13);
+				se.processPrompt();
+				if (pm.isBuySuccess) {
 					enterBuy = 13;
-					boolean flag = pm.buyProp(149, 1);
-					if (flag) {
-						pm.reducePropNum(pm.props[13].getPropId());
-						hero.setBoold(hero.getBoolds());
-						gameIndex = 0;
-						win1 = 0;
-						stopState = false;
-					}
+					pm.reducePropNum(pm.props[13].getPropId());
+					hero.setBoold(hero.getBoolds());
+					gameIndex = 0;
+					win1 = 0;
+					stopState = false;
 				}
 				alertSumTime = System.currentTimeMillis() - alertTime;
-			} else if (WinAndFailIndex == 0) {
-				PopupConfirm pc = UIResource.getInstance()
-						.buildDefaultPopupConfirm();
-				pc.setText("是否花费" + pm.props[6].getPrice() + moneyUnit
-						+ "购买保护符文道具？（能够避免通天塔失败的损失）");
+			} else if (WinAndFailIndex == 2) {
+
 				alertTime = System.currentTimeMillis();
-				if (pc.popup() == 0) {
-					enterBuy = 13;
-					boolean flag = pm.buyProp(142, 1);
-					if (flag) {
-						pm.reducePropNum(pm.props[6].getPropId());
-						changeLeaderOfProperty(tongtiantaMoney, tongtiantaExp);
-						gameIndex = 0;
-						win1 = 0;
-						stopState = false;
-						isTongtianta = false;
-						mainIndex = 0;
-						gameIndex = 0;
-						stopState = false;
-						isEnhanceBoold = false;
-						isEnhanceArmor = false;
-						isEnhanceSoldierATK = false;
-						Soldier.setAtkCoefficient(1.0f);
-						page = Resource.PAGE_INDEX[1];
-						mapIndexOfIndex = 0;
-						stopState = false;
-						Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
-						Resource.UnloadGameHero(Resource.saveSelectHero);
-						Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
-						Resource.UnloadMonster(monsterKind);
-						Resource.UnloadWinAndFail();
-						Resource.loadMain();
-						Resource.loadMainInfo();
-						tongtiantaExp = 0;
-						tongtiantaMoney = 0;
-						my.setCountTongtianta(0);
-					} else {
-						changeLeaderOfProperty(tongtiantaMoney / 2,
-								tongtiantaExp / 2);
-					}
-					alertSumTime = System.currentTimeMillis() - alertTime;
+				StateExpense se = new StateExpense(this, 136 + 13);
+				se.processPrompt();
+				enterBuy = 13;
+				if (pm.isBuySuccess) {
+					pm.reducePropNum(pm.props[6].getPropId());
+					changeLeaderOfProperty(tongtiantaMoney, tongtiantaExp);
+					gameIndex = 0;
+					win1 = 0;
+					stopState = false;
+					isTongtianta = false;
+					mainIndex = 0;
+					gameIndex = 0;
+					stopState = false;
+					isEnhanceBoold = false;
+					isEnhanceArmor = false;
+					isEnhanceSoldierATK = false;
+					Soldier.setAtkCoefficient(1.0f);
+					page = Resource.PAGE_INDEX[1];
+					mapIndexOfIndex = 0;
+					stopState = false;
+					Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
+					Resource.UnloadGameHero(Resource.saveSelectHero);
+					Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
+					Resource.UnloadMonster(monsterKind);
+					Resource.UnloadWinAndFail();
+					Resource.loadMain();
+					Resource.loadMainInfo();
+					tongtiantaExp = 0;
+					tongtiantaMoney = 0;
+					my.setCountTongtianta(0);
 				} else {
 					changeLeaderOfProperty(tongtiantaMoney / 2,
 							tongtiantaExp / 2);
@@ -7519,14 +7761,33 @@ public class GameEngine extends GameCanvasEngine {
 					tongtiantaMoney = 0;
 					my.setCountTongtianta(0);
 				}
+				alertSumTime = System.currentTimeMillis() - alertTime;
+				sag.saveRecord();
+				checkPaiming();
 			}
 		} else if (key.containsAndRemove(KeyCode.LEFT)) {
 			if (WinAndFailIndex == 1) {
 				WinAndFailIndex = 0;
+			} else if (WinAndFailIndex == 3) {
+				WinAndFailIndex = 2;
 			}
 		} else if (key.containsAndRemove(KeyCode.RIGHT)) {
 			if (WinAndFailIndex == 0) {
 				WinAndFailIndex = 1;
+			} else if (WinAndFailIndex == 2) {
+				WinAndFailIndex = 3;
+			}
+		} else if (key.containsAndRemove(KeyCode.UP)) {
+			if (WinAndFailIndex == 3) {
+				WinAndFailIndex = 1;
+			} else if (WinAndFailIndex == 2) {
+				WinAndFailIndex = 0;
+			}
+		} else if (key.containsAndRemove(KeyCode.DOWN)) {
+			if (WinAndFailIndex == 1) {
+				WinAndFailIndex = 3;
+			} else if (WinAndFailIndex == 0) {
+				WinAndFailIndex = 2;
 			}
 		}
 	}
@@ -7589,7 +7850,8 @@ public class GameEngine extends GameCanvasEngine {
 				tongtiantaMoney = 0;
 				my.setCountTongtianta(0);
 			}
-			sag.saveData();
+			sag.saveRecord();
+			checkPaiming();
 		} else if (key.containsAndRemove(KeyCode.LEFT)) {
 			if (WinAndFailIndex == 1) {
 				WinAndFailIndex = 0;
@@ -7615,15 +7877,64 @@ public class GameEngine extends GameCanvasEngine {
 	private void handeGameOver1(KeyState key) {
 		if (key.containsAndRemove(KeyCode.OK)) {
 			if (WinAndFailIndex == 0) {
-				mainIndex = 1;
+				enterWay = 1;
+				mainIndex = 3;
 				isEnhanceBoold = false;
 				isEnhanceArmor = false;
 				isEnhanceSoldierATK = false;
+				isDoubleAtk = false;
+				isDoubleExp = false;
+				isDoubleMoney = false;
 				Soldier.setAtkCoefficient(1.0f);
 				gameIndex = 0;
 				page = Resource.PAGE_INDEX[1];
 				mapIndexOfIndex = 0;
 				stopState = false;
+				sag.saveRecord();
+				Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
+				Resource.UnloadGameHero(Resource.saveSelectHero);
+				Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
+				Resource.UnloadMonster(monsterKind);
+				Resource.UnloadWinAndFail();
+				Resource.loadHero();
+				Resource.loadMainInfo();
+			} else if (WinAndFailIndex == 1) {
+				enterWay = 1;
+				mainIndex = 4;
+				isLoadSold = -1;
+				isEnhanceBoold = false;
+				isEnhanceArmor = false;
+				isEnhanceSoldierATK = false;
+				isDoubleAtk = false;
+				isDoubleExp = false;
+				isDoubleMoney = false;
+				Soldier.setAtkCoefficient(1.0f);
+				gameIndex = 0;
+				page = Resource.PAGE_INDEX[1];
+				mapIndexOfIndex = 0;
+				stopState = false;
+				sag.saveRecord();
+				Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
+				Resource.UnloadGameHero(Resource.saveSelectHero);
+				Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
+				Resource.UnloadMonster(monsterKind);
+				Resource.UnloadWinAndFail();
+				Resource.loadSoldier();
+				Resource.loadMainInfo();
+			} else if (WinAndFailIndex == 2) {
+				mainIndex = 1;
+				isEnhanceBoold = false;
+				isEnhanceArmor = false;
+				isEnhanceSoldierATK = false;
+				isDoubleAtk = false;
+				isDoubleExp = false;
+				isDoubleMoney = false;
+				Soldier.setAtkCoefficient(1.0f);
+				gameIndex = 0;
+				page = Resource.PAGE_INDEX[1];
+				mapIndexOfIndex = 0;
+				stopState = false;
+				sag.saveRecord();
 				Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
 				Resource.UnloadGameHero(Resource.saveSelectHero);
 				Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
@@ -7631,31 +7942,43 @@ public class GameEngine extends GameCanvasEngine {
 				Resource.UnloadWinAndFail();
 				Resource.loadSelectGuanqia();
 				Resource.loadMainInfo();
-			} else {
-				PopupConfirm pc = UIResource.getInstance()
-						.buildDefaultPopupConfirm();
-				pc.setText("是否花费" + pm.props[13].getPrice() + moneyUnit
-						+ "购买复活道具？");
-				if (pc.popup() == 0) {
-					enterBuy = 12;
-					boolean flag = pm.buyProp(149, 1);
-					if (flag) {
-						pm.reducePropNum(pm.props[13].getPropId());
-						hero.setBoold(hero.getBoolds());
-						gameIndex = 0;
-						win1 = 0;
-						stopState = false;
-					}
+			} else if (WinAndFailIndex == 3) {
+				alertTime = System.currentTimeMillis();
+				StateExpense se = new StateExpense(this, 136 + 12);
+				se.processPrompt();
+				enterBuy = 12;
+				if (pm.isBuySuccess) {
+					pm.reducePropNum(pm.props[13].getPropId());
+					hero.setBoold(hero.getBoolds());
+					gameIndex = 0;
+					win1 = 0;
+					stopState = false;
 				}
 				alertSumTime = System.currentTimeMillis() - alertTime;
 			}
 		} else if (key.containsAndRemove(KeyCode.LEFT)) {
 			if (WinAndFailIndex == 1) {
 				WinAndFailIndex = 0;
+			} else if (WinAndFailIndex == 3) {
+				WinAndFailIndex = 2;
 			}
 		} else if (key.containsAndRemove(KeyCode.RIGHT)) {
 			if (WinAndFailIndex == 0) {
 				WinAndFailIndex = 1;
+			} else if (WinAndFailIndex == 2) {
+				WinAndFailIndex = 3;
+			}
+		} else if (key.containsAndRemove(KeyCode.UP)) {
+			if (WinAndFailIndex == 3) {
+				WinAndFailIndex = 1;
+			} else if (WinAndFailIndex == 2) {
+				WinAndFailIndex = 0;
+			}
+		} else if (key.containsAndRemove(KeyCode.DOWN)) {
+			if (WinAndFailIndex == 1) {
+				WinAndFailIndex = 3;
+			} else if (WinAndFailIndex == 0) {
+				WinAndFailIndex = 2;
 			}
 		}
 	}
@@ -7700,7 +8023,7 @@ public class GameEngine extends GameCanvasEngine {
 						alertTimeFn(pt);
 					}
 				}
-				sag.saveData();
+				sag.saveRecord();
 				Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
 				Resource.UnloadGameHero(Resource.saveSelectHero);
 				Resource.UnloadBg(tongtiantaAndNormalBigGuanqia);
@@ -7740,7 +8063,7 @@ public class GameEngine extends GameCanvasEngine {
 					}
 				}
 				enterWayAward = 2;
-				sag.saveData();
+				sag.saveRecord();
 				setAwardPoint();
 				Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
 				Resource.UnloadGameHero(Resource.saveSelectHero);
@@ -7774,6 +8097,8 @@ public class GameEngine extends GameCanvasEngine {
 				isEnhanceBoold = false;
 				isEnhanceArmor = false;
 				isEnhanceSoldierATK = false;
+				isDoubleExp = false;
+				isDoubleMoney = false;
 				Soldier.setAtkCoefficient(1.0f);
 				startEnertGame();
 			} else if (stopIndex == 2) {
@@ -7791,6 +8116,8 @@ public class GameEngine extends GameCanvasEngine {
 					isEnhanceBoold = false;
 					isEnhanceArmor = false;
 					isEnhanceSoldierATK = false;
+					isDoubleExp = false;
+					isDoubleMoney = false;
 					Soldier.setAtkCoefficient(1.0f);
 					page = Resource.PAGE_INDEX[1];
 					Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
@@ -7799,11 +8126,15 @@ public class GameEngine extends GameCanvasEngine {
 					Resource.UnloadMonster(monsterKind);
 					Resource.loadTongtianta();
 					Resource.loadMainInfo();
+					sag.saveRecord();
+					checkPaiming();
 				} else {
 					mainIndex = 1;
 					isEnhanceBoold = false;
 					isEnhanceArmor = false;
 					isEnhanceSoldierATK = false;
+					isDoubleExp = false;
+					isDoubleMoney = false;
 					Soldier.setAtkCoefficient(1.0f);
 					page = Resource.PAGE_INDEX[1];
 					Resource.UnloadGameSoldier(Resource.savaSelcetSoldier);
@@ -7812,6 +8143,8 @@ public class GameEngine extends GameCanvasEngine {
 					Resource.UnloadMonster(monsterKind);
 					Resource.loadSelectGuanqia();
 					Resource.loadMainInfo();
+					sag.saveRecord();
+					checkPaiming();
 				}
 			}
 		} else if (key.containsAndRemove(KeyCode.UP)) {
@@ -7844,99 +8177,76 @@ public class GameEngine extends GameCanvasEngine {
 	private void handeSuggest(KeyState key) {
 		if (key.containsAndRemove(KeyCode.OK)) {
 			if (suggestIndex == 0) {
-				if (Resource.goodsNums[7] == 0) {
-					PopupConfirm pc = UIResource.getInstance()
-							.buildDefaultPopupConfirm();
-					pc.setText("是否花费" + pm.props[7].getPrice() + moneyUnit
-							+ "购买道具");
-					if (pc.popup() == 0) {
-						enterBuy = 10;
-						boolean flag = pm.buyProp(143, 1);
-						if (flag) {
-							pm.reducePropNum(pm.props[7].getPropId());
-							heroStateLength++;
-							isEnhanceSoldierATK = true;
-							if (isEnhanceSoldierATK) {
-								drawUseProp8();
-							}
+				if (pm.props[7].getNums() == 0) {
+					StateExpense se = new StateExpense(this, 136 + 7);
+					se.processPrompt();
+					enterBuy = 10;
+					if (pm.isBuySuccess) {
+						pm.reducePropNum(pm.props[7].getPropId());
+						heroStateLength++;
+						isEnhanceSoldierATK = true;
+						if (isEnhanceSoldierATK) {
+							drawUseProp8();
 						}
 					}
 				} else {
 					pm.reducePropNum(pm.props[7].getPropId());
 					heroStateLength++;
 					isEnhanceSoldierATK = true;
-					Resource.goodsNums[7]--;
+					pm.props[7].reduceNums();
 					if (isEnhanceSoldierATK) {
 						drawUseProp8();
 					}
 				}
 			} else if (suggestIndex == 1) {
-				if (Resource.goodsNums[8] == 0) {
-					PopupConfirm pc = UIResource.getInstance()
-							.buildDefaultPopupConfirm();
-					pc.setText("是否花费" + pm.props[8].getPrice() + moneyUnit
-							+ "购买道具");
-					if (pc.popup() == 0) {
-						enterBuy = 10;
-						boolean flag = pm.buyProp(144, 1);
-						if (flag) {
-							pm.reducePropNum(pm.props[8].getPropId());
-							heroStateLength++;
-							isEnhanceArmor = true;
-							if (isEnhanceArmor) {
-								drawUseProp9();
-							}
+				if (pm.props[8].getNums() == 0) {
+					StateExpense se = new StateExpense(this, 136 + 8);
+					se.processPrompt();
+					enterBuy = 10;
+					if (pm.isBuySuccess) {
+						pm.reducePropNum(pm.props[8].getPropId());
+						heroStateLength++;
+						isEnhanceArmor = true;
+						if (isEnhanceArmor) {
+							drawUseProp9();
 						}
 					}
 				} else {
 					pm.reducePropNum(pm.props[8].getPropId());
 					heroStateLength++;
 					isEnhanceArmor = true;
-					Resource.goodsNums[8]--;
+					pm.props[8].reduceNums();
 					if (isEnhanceArmor) {
 						drawUseProp9();
 					}
 				}
 			} else if (suggestIndex == 2) {
-				if (Resource.goodsNums[9] == 0) {
-					PopupConfirm pc = UIResource.getInstance()
-							.buildDefaultPopupConfirm();
-					pc.setText("是否花费" + pm.props[9].getPrice() + moneyUnit
-							+ "购买道具");
-					if (pc.popup() == 0) {
-						enterBuy = 10;
-						boolean flag = pm.buyProp(145, 1);
-						if (flag) {
-							pm.reducePropNum(pm.props[9].getPropId());
-							heroStateLength++;
-							isEnhanceBoold = true;
-							if (isEnhanceBoold) {
-								drawUseProp10();
-							}
+				if (pm.props[9].getNums() == 0) {
+					StateExpense se = new StateExpense(this, 136 + 9);
+					se.processPrompt();
+					enterBuy = 10;
+					if (pm.isBuySuccess) {
+						pm.reducePropNum(pm.props[9].getPropId());
+						heroStateLength++;
+						isEnhanceBoold = true;
+						if (isEnhanceBoold) {
+							drawUseProp10();
 						}
 					}
 				} else {
 					pm.reducePropNum(pm.props[9].getPropId());
 					heroStateLength++;
 					isEnhanceBoold = true;
-					Resource.goodsNums[9]--;
+					pm.props[9].reduceNums();
 					if (isEnhanceBoold) {
 						drawUseProp10();
 					}
 				}
+
 			} else if (suggestIndex == 3) {
-				PopupConfirm pc = UIResource.getInstance()
-						.buildDefaultPopupConfirm();
-				pc.setText("是否花费" + pm.props[10].getPrice() + moneyUnit
-						+ "购买道具");
-				if (pc.popup() == 0) {
-					enterBuy = 10;
-					boolean flag = pm.buyProp(146, 1);
-					if (flag) {
-						pm.reducePropNum(pm.props[10].getPropId());
-						drawUseProp11();
-					}
-				}
+				StateExpense se = new StateExpense(this, 136 + 10);
+				se.processPrompt();
+				enterBuy = 10;
 			}
 		} else if (key.containsAndRemove(KeyCode.LEFT)) {
 			if (suggestIndex > 0) {
@@ -7954,7 +8264,7 @@ public class GameEngine extends GameCanvasEngine {
 		}
 	}
 
-	PopupConfirm pcGame;
+	// PopupConfirm pcGame;
 
 	private void handleGameKey(KeyState key) {
 		if (key.containsAndRemove(KeyCode.OK) && state) {
@@ -8082,73 +8392,61 @@ public class GameEngine extends GameCanvasEngine {
 			stopIndex = 0;
 			Resource.loadStop();
 		} else if (key.containsAndRemove(KeyCode.NUM1)) {
-			if (Resource.goodsNums[0] > 0) {
-				Resource.goodsNums[0]--;
+			if (pm.props[0].getNums() > 0) {
+				pm.props[0].reduceNums();
 				useProp[0] = 1;
 			} else {
-				pcGame = UIResource.getInstance().buildDefaultPopupConfirm();
-				pcGame.setText("是否花费" + pm.props[0].getPrice() + moneyUnit
-						+ "购买血瓶道具？");
+
 				alertTime = System.currentTimeMillis();
-				isAllStop = true;
-				if (pcGame.popup() == 0) {
-					enterBuy = 11;
-					boolean flag = pm.buyProp(136, 1);
-					if (flag) {
-						pm.reducePropNum(pm.props[0].getPropId());
-						useProp[0] = 1;
-					}
+				StateExpense se = new StateExpense(this, 136 + 0);
+				se.processPrompt();
+				enterBuy = 11;
+				if (pm.isBuySuccess) {
+					pm.reducePropNum(pm.props[0].getPropId());
+					useProp[0] = 1;
 				}
+				alertSumTime = System.currentTimeMillis() - alertTime;
 			}
 		} else if (key.containsAndRemove(KeyCode.NUM2)) {
-			if (Resource.goodsNums[1] > 0) {
-				Resource.goodsNums[1]--;
+			if (pm.props[1].getNums() > 0) {
+				pm.props[1].reduceNums();
 				useProp[1] = 2;
 				prop2Index = 0;
 			} else {
-				pcGame = UIResource.getInstance().buildDefaultPopupConfirm();
-				pcGame.setText("是否花费" + pm.props[1].getPrice() + moneyUnit
-						+ "购买火球术道具？");
 				alertTime = System.currentTimeMillis();
-				isAllStop = true;
-				if (pcGame.popup() == 0) {
-					enterBuy = 11;
-					boolean flag = pm.buyProp(137, 1);
-					if (flag) {
-						pm.reducePropNum(pm.props[1].getPropId());
-						useProp[1] = 2;
-						prop2Index = 0;
-					}
+				StateExpense se = new StateExpense(this, 136 + 1);
+				se.processPrompt();
+				enterBuy = 11;
+				if (pm.isBuySuccess) {
+					pm.reducePropNum(pm.props[1].getPropId());
+					useProp[1] = 2;
+					prop2Index = 0;
 				}
+				alertSumTime = System.currentTimeMillis() - alertTime;
 			}
 		} else if (key.containsAndRemove(KeyCode.NUM3)) {
 			if (!isDoubleAtk) {
-				if (Resource.goodsNums[2] > 0) {
-					Resource.goodsNums[2]--;
+				if (pm.props[2].getNums() > 0) {
+					pm.props[2].reduceNums();
 					prop3StartTime = System.currentTimeMillis();
 					useProp[2] = 3;
 					soldierATkTimes = 2;
 					heroStateLength++;
 					isDoubleAtk = true;
 				} else {
-					pcGame = UIResource.getInstance()
-							.buildDefaultPopupConfirm();
-					pcGame.setText("是否花费" + pm.props[2].getPrice() + moneyUnit
-							+ "购买狂暴术道具？");
 					alertTime = System.currentTimeMillis();
-					isAllStop = true;
-					if (pcGame.popup() == 0) {
-						enterBuy = 11;
-						boolean flag = pm.buyProp(138, 1);
-						if (flag) {
-							pm.reducePropNum(pm.props[2].getPropId());
-							prop3StartTime = System.currentTimeMillis();
-							useProp[2] = 3;
-							soldierATkTimes = 2;
-							heroStateLength++;
-							isDoubleAtk = true;
-						}
+					StateExpense se = new StateExpense(this, 136 + 2);
+					se.processPrompt();
+					enterBuy = 11;
+					if (pm.isBuySuccess) {
+						pm.reducePropNum(pm.props[2].getPropId());
+						prop3StartTime = System.currentTimeMillis();
+						useProp[2] = 3;
+						soldierATkTimes = 2;
+						heroStateLength++;
+						isDoubleAtk = true;
 					}
+					alertSumTime = System.currentTimeMillis() - alertTime;
 				}
 			}
 		} else if (key.containsAndRemove(KeyCode.NUM5)) {
@@ -8184,28 +8482,26 @@ public class GameEngine extends GameCanvasEngine {
 		if (randomHeroSayIndex * 10 < 640) {
 			if (!stopState && !isSuggest)
 				randomHeroSayIndex++;
-			Image herosay1 = Resource.loadImage(Resource.herosay1);
-			g.drawRegion(herosay1, 0, randomHeroSayLocaltion * 22, 359, 22, 0,
+			g.drawRegion(Resource.images[Resource.herosay1], 0,
+					randomHeroSayLocaltion * 22, 359, 22, 0,
 					randomHeroSayIndex * 20, 240, 20);
 		} else {
 			isNowHeroSay = false;
 			randomHeroSayIndex = 0;
 		}
-		Resource.releaseImage(Resource.herosay1);
 	}
 
 	private void drawSoldierSay() {
 		if (randomSoldierSayIndex * 10 < 640) {
 			if (!stopState && !isSuggest)
 				randomSoldierSayIndex++;
-			Image herosay2 = Resource.loadImage(Resource.herosay2);
-			g.drawRegion(herosay2, 0, randomSoldierSayLocaltion * 51, 318, 51,
-					0, randomSoldierSayIndex * 20, 160, 20);
+			g.drawRegion(Resource.images[Resource.herosay2], 0,
+					randomSoldierSayLocaltion * 51, 318, 51, 0,
+					randomSoldierSayIndex * 20, 160, 20);
 		} else {
 			isNowSoldierSay = false;
 			randomSoldierSayIndex = 0;
 		}
-		Resource.releaseImage(Resource.herosay2);
 	}
 
 	public boolean collision(Soldier s, Monster m) {
@@ -8219,10 +8515,6 @@ public class GameEngine extends GameCanvasEngine {
 			}
 		}
 		return false;
-	}
-
-	public int openRecharge() {
-		return SaveAndGet.getInstance().queryCoin();
 	}
 
 	public void setFont(int size, boolean isBold, SGraphics g) {

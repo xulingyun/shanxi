@@ -1,12 +1,12 @@
+port: 10001
 MIDlet-1: MIDlet-1,,test.TestG
-MIDlet-Jar-URL: legion-ah.jar
-userid: 90000138
+token: iptv
+MIDlet-Jar-URL: shanxi-legion.jar
+userid: CP900802
 MicroEdition-Configuration: CLDC-1.0
+ip: 125.76.229.154
 MIDlet-Version: 1.0.0
-cpid: hyCpID00002
-MIDlet-Name: legion-ah MIDlet Suite
 MIDlet-Vendor: MIDlet Suite Vendor
+MIDlet-Name: shanxi-legion MIDlet Suite
 MicroEdition-Profile: MIDP-2.1
-gameid: 32
-serverip: http://61.191.45.166:8080
-password: 123
+gameid: 900802
