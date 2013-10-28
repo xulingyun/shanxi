@@ -1,0 +1,13 @@
+MIDlet-1: MIDlet-1,,test.TestG
+MIDlet-Jar-Size: 1462885
+MIDlet-Jar-URL: shanxi-legion.jar
+MIDlet-Name: shanxi-legion MIDlet Suite
+MIDlet-Vendor: MIDlet Suite Vendor
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.0
+MicroEdition-Profile: MIDP-2.1
+gameid: 900802
+ip: 125.76.229.154
+port: 10001
+token: iptv
+userid: CP900802
